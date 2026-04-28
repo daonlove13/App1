@@ -13,6 +13,8 @@ import HistoryPage from './components/HistoryPage';
 import CreateTeamPage from './components/CreateTeamPage';
 import InviteLinkPage from './components/InviteLinkPage';
 import MatchSuccessPage from './components/MatchSuccessPage';
+import RestaurantDetailPage, { type Restaurant } from './components/RestaurantDetailPage';
+import NotificationPage from './components/NotificationPage';
 import FlowView from './components/FlowView';
 
 // ── 타입 ───────────────────────────────────────────────────────
@@ -24,7 +26,9 @@ type SubPage =
   | 'history'
   | 'createTeam'
   | 'inviteLink'
-  | 'matchSuccess';
+  | 'matchSuccess'
+  | 'restaurant'
+  | 'notifications';
 
 // ── 앱 ────────────────────────────────────────────────────────
 export default function App() {
@@ -34,6 +38,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('home');
   const [subPage, setSubPage] = useState<SubPage>('none');
   const [openChat, setOpenChat] = useState<ChatItem | null>(null);
+  const [openRestaurant, setOpenRestaurant] = useState<Restaurant | null>(null);
 
   // 팀 생성 시 저장
   const [createdTeamName, setCreatedTeamName] = useState('');
@@ -145,6 +150,22 @@ export default function App() {
             onLater={goBack}
           />
         );
+      case 'restaurant':
+        return openRestaurant ? (
+          <RestaurantDetailPage
+            restaurant={openRestaurant}
+            onBack={goBack}
+            onApply={() => { goBack(); handleTabChange('matching'); }}
+          />
+        ) : null;
+      case 'notifications':
+        return (
+          <NotificationPage
+            onBack={goBack}
+            onOpenChat={() => { goBack(); handleTabChange('chat'); }}
+            onOpenMatching={() => { goBack(); handleTabChange('matching'); }}
+          />
+        );
       default:
         break;
     }
@@ -157,6 +178,8 @@ export default function App() {
             onTabChange={handleTabChange}
             onCreateTeam={() => goTo('createTeam')}
             onInviteTeam={() => goTo('inviteLink')}
+            onOpenRestaurant={(r) => { setOpenRestaurant(r); goTo('restaurant'); }}
+            onOpenNotifications={() => goTo('notifications')}
           />
         );
       case 'matching':

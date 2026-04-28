@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, Search, Bell, ChevronRight, Users, UserPlus } from 'lucide-react';
+import { Heart, Bell, ChevronRight, Users, UserPlus } from 'lucide-react';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 
@@ -150,9 +150,12 @@ function StatsSection({ hasTeam }: { hasTeam: boolean }) {
 }
 
 // ─── 식당 카드 (이미지 없음) ──────────────────────────────────────────────────
-function RestaurantListItem({ item }: { item: RestaurantCard }) {
+function RestaurantListItem({ item, onClick }: { item: RestaurantCard; onClick: () => void }) {
   return (
-    <div className="bg-white rounded-[16px] overflow-hidden shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)] border border-[#f3f4f6]">
+    <button
+      onClick={onClick}
+      className="bg-white rounded-[16px] overflow-hidden shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)] border border-[#f3f4f6] text-left active:bg-[#fafafa]"
+    >
       {/* 빈 이미지 영역 */}
       <div className="h-[100px] bg-[#f3f4f6] flex items-center justify-center">
         <span className="text-[#d1d5dc] text-[11px]">사진 준비 중</span>
@@ -161,7 +164,7 @@ function RestaurantListItem({ item }: { item: RestaurantCard }) {
         <h3 className="font-bold text-[13px] text-[#0a0a0a] mb-0.5 leading-[18px]">{item.name}</h3>
         <p className="text-[11px] text-[#6a7282]">{item.location} · {item.district}</p>
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -171,12 +174,16 @@ export default function MainHome({
   onTabChange,
   onCreateTeam,
   onInviteTeam,
+  onOpenRestaurant,
+  onOpenNotifications,
   appliedState = false,
 }: {
   hasTeam: boolean;
   onTabChange: (tab: Tab) => void;
   onCreateTeam: () => void;
   onInviteTeam: () => void;
+  onOpenRestaurant?: (item: RestaurantCard) => void;
+  onOpenNotifications?: () => void;
   appliedState?: boolean;
 }) {
   const myTeam: MyTeam = {
@@ -215,8 +222,7 @@ export default function MainHome({
           <span className="font-['Protest_Riot'] text-[20px] leading-[28px]">indeed</span>
         </div>
         <div className="flex items-center gap-1">
-          <button className="p-2"><Search size={24} /></button>
-          <button className="p-2 relative">
+          <button className="p-2 relative" onClick={onOpenNotifications}>
             <Bell size={24} />
             <div className="absolute top-1 right-1 w-2 h-2 bg-black rounded-full" />
           </button>
@@ -232,12 +238,15 @@ export default function MainHome({
 
         <StatsSection hasTeam={hasTeam} />
 
-        {/* 근처 식당 */}
+        {/* 근처 갈만한 식당 */}
         <div className="mb-4">
-          <h2 className="font-bold text-[18px] text-[#0a0a0a] mb-3">근처 식당</h2>
+          <div className="mb-3">
+            <h2 className="font-bold text-[18px] text-[#0a0a0a]">근처 갈만한 식당</h2>
+            <p className="text-[12px] text-[#6a7282] mt-0.5">매칭되면 가기 좋은 학교 근처 가게들이에요</p>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             {restaurants.map((item) => (
-              <RestaurantListItem key={item.id} item={item} />
+              <RestaurantListItem key={item.id} item={item} onClick={() => onOpenRestaurant?.(item)} />
             ))}
           </div>
         </div>

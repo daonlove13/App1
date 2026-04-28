@@ -10,6 +10,8 @@ import HistoryPage from './HistoryPage';
 import CreateTeamPage from './CreateTeamPage';
 import InviteLinkPage from './InviteLinkPage';
 import MatchSuccessPage from './MatchSuccessPage';
+import RestaurantDetailPage from './RestaurantDetailPage';
+import NotificationPage from './NotificationPage';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 
@@ -225,9 +227,32 @@ export default function FlowView() {
 
         <Divider />
 
-        {/* ── ⑤ MY 탭 ── */}
+        {/* ── 홈 헤더 액션 ── */}
         <section>
-          <SectionHeader num="5" title="MY 탭" color="bg-gray-600" />
+          <SectionHeader num="5" title="홈 헤더 액션 (알림·식당)" color="bg-gray-600" />
+          <div className="flex items-start gap-3 flex-wrap">
+            <ScreenCard label="홈 (팀 있음)" sublabel="헤더 아이콘 진입점">
+              <MainHome hasTeam={true} onTabChange={noopTab} onCreateTeam={noop} onInviteTeam={noop} />
+            </ScreenCard>
+            <Arrow label="🔔 알림 →" />
+            <ScreenCard label="알림 목록" sublabel="매칭·채팅·시스템" tag="신규" tagColor="bg-blue-500">
+              <NotificationPage onBack={noop} />
+            </ScreenCard>
+            <Arrow label="식당 카드 →" />
+            <ScreenCard label="식당 상세" sublabel="대기 팀·매칭 신청" tag="신규" tagColor="bg-blue-500">
+              <RestaurantDetailPage
+                restaurant={{ id: 1, name: '치킨앤비어 중대점', location: '서울', district: '도봉구', teamCount: 3, seats: 20 }}
+                onBack={noop}
+              />
+            </ScreenCard>
+          </div>
+        </section>
+
+        <Divider />
+
+        {/* ── ⑥ MY 탭 ── */}
+        <section>
+          <SectionHeader num="6" title="MY 탭" color="bg-gray-600" />
           <div className="flex items-start gap-3 flex-wrap">
             <ScreenCard label="MY">
               <MyPage onTabChange={noopTab} onOpenHistory={noop} />

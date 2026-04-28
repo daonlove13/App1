@@ -123,12 +123,6 @@ export default function ChatRoomPage({ chat, onBack }: Props) {
           );
         })}
 
-        {/* 제휴 가게 리스트 배너 */}
-        <div className="bg-[#f9fafb] rounded-[10px] px-[14px] py-[10px] flex items-center justify-between border border-[#e5e7eb]">
-          <span className="text-[12px] text-[#6a7282]">제휴 가게 리스트 보기</span>
-          <span className="text-[12px] font-medium text-black">→</span>
-        </div>
-
         <div ref={bottomRef} />
       </div>
 

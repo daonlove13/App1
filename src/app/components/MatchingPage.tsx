@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Search, Bell, Heart, X, UserPlus } from 'lucide-react';
+import { Bell, X, UserPlus } from 'lucide-react';
+import BottomNav from './BottomNav';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 
@@ -12,9 +13,11 @@ interface Member {
 
 interface Props {
   onTabChange: (tab: Tab) => void;
+  onOpenNotifications?: () => void;
+  onApply?: () => void;
 }
 
-export default function MatchingPage({ onTabChange }: Props) {
+export default function MatchingPage({ onTabChange, onOpenNotifications, onApply }: Props) {
   const [teamSize, setTeamSize] = useState<'2v2' | '3v3'>('2v2');
   const [matchType, setMatchType] = useState<'freshman' | 'free'>('freshman');
   const [members, setMembers] = useState<Member[]>([
@@ -42,13 +45,10 @@ export default function MatchingPage({ onTabChange }: Props) {
           <span className="font-['Protest_Riot'] text-[24px] leading-[32px]">?</span>
           <span className="font-['Protest_Riot'] text-[20px] leading-[28px]">indeed</span>
         </div>
-        <div className="flex items-center gap-1">
-          <button className="p-2"><Search size={24} /></button>
-          <button className="p-2 relative">
-            <Bell size={24} />
-            <div className="absolute top-1 right-1 w-2 h-2 bg-black rounded-full" />
-          </button>
-        </div>
+        <button className="p-2 relative" onClick={onOpenNotifications}>
+          <Bell size={24} />
+          <div className="absolute top-1 right-1 w-2 h-2 bg-black rounded-full" />
+        </button>
       </div>
 
       {/* ── Content ── */}
@@ -154,10 +154,16 @@ export default function MatchingPage({ onTabChange }: Props) {
 
           {/* 버튼 */}
           <div className="flex flex-col gap-3">
-            <button className="w-full bg-black text-white rounded-[14px] py-[15px] text-[15px] font-semibold">
+            <button
+              onClick={() => onTabChange('home')}
+              className="w-full bg-black text-white rounded-[14px] py-[15px] text-[15px] font-semibold active:bg-gray-800"
+            >
               저장하고 돌아가기
             </button>
-            <button className="w-full bg-white border-2 border-black text-black rounded-[14px] py-[14px] text-[15px] font-semibold">
+            <button
+              onClick={onApply}
+              className="w-full bg-white border-2 border-black text-black rounded-[14px] py-[14px] text-[15px] font-semibold active:bg-gray-100"
+            >
               저장하고 즉시 매칭 →
             </button>
           </div>
@@ -165,32 +171,7 @@ export default function MatchingPage({ onTabChange }: Props) {
         </div>
       </div>
 
-      {/* ── Bottom Navigation ── */}
-      <div className="absolute bottom-[34px] left-0 right-0 bg-white border-t border-[#f3f4f6] px-4 pt-[13px] h-[56px]">
-        <div className="flex items-center justify-around">
-          <button onClick={() => onTabChange('home')} className="flex flex-col items-center gap-1">
-            <div className="w-6 h-[4px] bg-[#d1d5dc] rounded-full" />
-            <span className="text-[12px] text-[#99a1af]">홈</span>
-          </button>
-          <button onClick={() => onTabChange('matching')} className="flex flex-col items-center gap-1">
-            <Heart size={22} className="text-black" fill="black" />
-            <span className="text-[12px] font-medium text-black">매칭</span>
-          </button>
-          <button onClick={() => onTabChange('chat')} className="flex flex-col items-center gap-1">
-            <div className="w-6 h-6 border-2 border-[#d1d5dc] rounded-full" />
-            <span className="text-[12px] text-[#99a1af]">채팅</span>
-          </button>
-          <button onClick={() => onTabChange('my')} className="flex flex-col items-center gap-1">
-            <div className="w-6 h-6 border-2 border-[#d1d5dc] rounded-full" />
-            <span className="text-[12px] text-[#99a1af]">MY</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ── Home Indicator ── */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px] bg-white">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-black rounded-full" />
-      </div>
+      <BottomNav active="matching" onTabChange={onTabChange} />
     </div>
   );
 }

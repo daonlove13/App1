@@ -183,12 +183,19 @@ export default function App() {
           />
         );
       case 'matching':
-        return <MatchingPage onTabChange={handleTabChange} />;
+        return (
+          <MatchingPage
+            onTabChange={handleTabChange}
+            onOpenNotifications={() => goTo('notifications')}
+            onApply={() => goTo('matchSuccess')}
+          />
+        );
       case 'chat':
         return (
           <ChatPage
             onTabChange={handleTabChange}
             onOpenRoom={(chat) => { setOpenChat(chat); goTo('chatRoom'); }}
+            onOpenNotifications={() => goTo('notifications')}
           />
         );
       case 'my':

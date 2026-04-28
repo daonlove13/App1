@@ -1,4 +1,5 @@
-import { Heart, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import BottomNav from './BottomNav';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 
@@ -103,32 +104,7 @@ export default function MyPage({ onTabChange, onOpenHistory }: Props) {
 
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="absolute bottom-[34px] left-0 right-0 bg-white border-t border-[#f3f4f6] px-4 pt-[13px] h-[56px]">
-        <div className="flex items-center justify-around">
-          <button onClick={() => onTabChange('home')} className="flex flex-col items-center gap-1">
-            <div className="w-6 h-[4px] bg-[#d1d5dc] rounded-full" />
-            <span className="text-[12px] text-[#99a1af]">홈</span>
-          </button>
-          <button onClick={() => onTabChange('matching')} className="flex flex-col items-center gap-1">
-            <Heart size={22} className="text-[#99a1af]" />
-            <span className="text-[12px] text-[#99a1af]">매칭</span>
-          </button>
-          <button onClick={() => onTabChange('chat')} className="flex flex-col items-center gap-1">
-            <div className="w-6 h-6 border-2 border-[#d1d5dc] rounded-full" />
-            <span className="text-[12px] text-[#99a1af]">채팅</span>
-          </button>
-          <button onClick={() => onTabChange('my')} className="flex flex-col items-center gap-1">
-            <div className="w-6 h-[4px] bg-black rounded-full" />
-            <span className="text-[12px] font-medium text-black">MY</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Home Indicator */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px] bg-white">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-black rounded-full" />
-      </div>
+      <BottomNav active="my" onTabChange={onTabChange} />
     </div>
   );
 }

@@ -170,27 +170,29 @@ function VerifyView({ email, onBack, onDone }: { email: string; onBack: () => vo
         </p>
 
         {/* 코드 입력 */}
-        <div className="flex gap-[10px] justify-center mb-[20px]">
-          {[0,1,2,3,4,5].map(i => (
-            <div
-              key={i}
-              className={`w-[44px] h-[52px] border-2 rounded-[12px] flex items-center justify-center text-[22px] font-bold transition-colors ${
-                code[i] ? 'border-black bg-[#f9fafb]' : i === code.length ? 'border-black' : 'border-[#e5e7eb]'
-              }`}
-            >
-              {code[i] || ''}
-            </div>
-          ))}
-        </div>
-
-        <input
-          autoFocus
-          type="number"
-          value={code}
-          onChange={e => setCode(e.target.value.slice(0, 6))}
-          className="w-full opacity-0 absolute pointer-events-auto h-0"
-          inputMode="numeric"
-        />
+        <label className="relative block mb-[20px]">
+          <div className="flex gap-[10px] justify-center">
+            {[0,1,2,3,4,5].map(i => (
+              <div
+                key={i}
+                className={`w-[44px] h-[52px] border-2 rounded-[12px] flex items-center justify-center text-[22px] font-bold transition-colors ${
+                  code[i] ? 'border-black bg-[#f9fafb]' : i === code.length ? 'border-black' : 'border-[#e5e7eb]'
+                }`}
+              >
+                {code[i] || ''}
+              </div>
+            ))}
+          </div>
+          <input
+            autoFocus
+            type="text"
+            value={code}
+            onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            inputMode="numeric"
+            maxLength={6}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-text"
+          />
+        </label>
 
         <button className="w-full text-center text-[12px] text-[#6a7282] py-2">
           코드를 받지 못했나요? <span className="text-black font-medium underline">재전송</span>

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Camera, CheckCircle, Upload } from 'lucide-react';
+import { Camera, CheckCircle, Upload, ChevronLeft } from 'lucide-react';
 
 interface Props {
   onDone: () => void;
+  onBack?: () => void;
 }
 
-export default function StudentIdUploadPage({ onDone }: Props) {
+export default function StudentIdUploadPage({ onDone, onBack }: Props) {
   const [state, setState] = useState<'idle' | 'uploaded' | 'pending'>('idle');
 
   const handleUpload = () => {
@@ -22,9 +23,14 @@ export default function StudentIdUploadPage({ onDone }: Props) {
       </div>
 
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center justify-center px-4">
-        <div className="flex items-center gap-2">
-          <span className="font-['Protest_Riot'] text-[22px] leading-[28px]">?</span>
+      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center px-4">
+        {onBack && (
+          <button onClick={onBack} className="flex items-center gap-1 text-[13px] text-[#6a7282]">
+            <ChevronLeft size={18} />
+            뒤로
+          </button>
+        )}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
           <span className="font-['Protest_Riot'] text-[18px] leading-[26px]">indeed</span>
         </div>
       </div>

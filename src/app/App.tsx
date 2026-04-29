@@ -122,7 +122,7 @@ export default function App() {
         >
           🗺 플로우 보기
         </button>
-        <StudentIdUploadPage onDone={() => setAppScreen('app')} />
+        <StudentIdUploadPage onDone={() => setAppScreen('app')} onBack={() => setAppScreen('login')} />
       </div>
     );
   }

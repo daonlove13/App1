@@ -1,5 +1,6 @@
 import Splash from '../../imports/Splash';
 import Login from '../../imports/Login';
+import OnboardingScreen from './OnboardingScreen';
 import StudentIdUploadPage from './StudentIdUploadPage';
 import MainHome from './MainHome';
 import MatchingPage from './MatchingPage';
@@ -151,7 +152,11 @@ export default function FlowView() {
               <Splash />
             </ScreenCard>
             <Arrow label="자동" />
-            <ScreenCard label="로그인" sublabel="학교 이메일 인증">
+            <ScreenCard label="온보딩 소개" sublabel="3슬라이드 / 건너뛰기" tag="신규" tagColor="bg-blue-500">
+              <OnboardingScreen onDone={noop} />
+            </ScreenCard>
+            <Arrow label="시작하기 →" />
+            <ScreenCard label="로그인 / 가입" sublabel="개인 이메일 인증" tag="수정됨" tagColor="bg-purple-500">
               <Login />
             </ScreenCard>
             <Arrow label="가입 완료" />

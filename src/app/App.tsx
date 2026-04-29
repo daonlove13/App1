@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 // ── 화면 컴포넌트 ──────────────────────────────────────────────
 import SplashScreen from './components/SplashScreen';
+import OnboardingScreen from './components/OnboardingScreen';
 import LoginScreen from './components/LoginScreen';
 import StudentIdUploadPage from './components/StudentIdUploadPage';
 import MainHome from './components/MainHome';
@@ -18,7 +19,7 @@ import NotificationPage from './components/NotificationPage';
 import FlowView from './components/FlowView';
 
 // ── 타입 ───────────────────────────────────────────────────────
-type AppScreen = 'splash' | 'login' | 'studentIdUpload' | 'app';
+type AppScreen = 'splash' | 'onboarding' | 'login' | 'studentIdUpload' | 'app';
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 type SubPage =
   | 'none'
@@ -79,7 +80,21 @@ export default function App() {
         >
           🗺 플로우 보기
         </button>
-        <SplashScreen onDone={() => setAppScreen('login')} />
+        <SplashScreen onDone={() => setAppScreen('onboarding')} />
+      </div>
+    );
+  }
+
+  if (appScreen === 'onboarding') {
+    return (
+      <div className="size-full flex items-center justify-center bg-gray-100">
+        <button
+          onClick={() => setShowFlow(true)}
+          className="fixed top-4 right-4 z-50 bg-black text-white text-[12px] font-semibold px-4 py-2 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
+        >
+          🗺 플로우 보기
+        </button>
+        <OnboardingScreen onDone={() => setAppScreen('login')} />
       </div>
     );
   }

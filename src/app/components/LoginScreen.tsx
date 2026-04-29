@@ -41,7 +41,7 @@ function LandingView({ onEmailSignup, onLogin }: { onEmailSignup: () => void; on
           onClick={onEmailSignup}
           className="bg-black h-[56px] rounded-[15px] flex items-center justify-center"
         >
-          <span className="text-white text-[17px] font-semibold">학교 이메일로 시작하기</span>
+          <span className="text-white text-[17px] font-semibold">이메일로 시작하기</span>
         </button>
         <button
           onClick={onLogin}
@@ -70,7 +70,7 @@ function LandingView({ onEmailSignup, onLogin }: { onEmailSignup: () => void; on
 /* ── 이메일 입력 화면 ────────────────────────────── */
 function EmailView({ onBack, onNext }: { onBack: () => void; onNext: (email: string) => void }) {
   const [email, setEmail] = useState('');
-  const isValid = email.includes('@') && email.endsWith('.ac.kr');
+  const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
@@ -93,9 +93,9 @@ function EmailView({ onBack, onNext }: { onBack: () => void; onNext: (email: str
           ))}
         </div>
 
-        <p className="text-[12px] text-[#6a7282] mb-[4px]">STEP 1 · 학교 이메일</p>
-        <h2 className="font-bold text-[22px] text-[#0a0a0a] mb-[6px]">학교 이메일을<br />입력해주세요</h2>
-        <p className="text-[13px] text-[#6a7282] mb-[28px]">재학생 인증을 위해 .ac.kr 이메일이 필요해요.</p>
+        <p className="text-[12px] text-[#6a7282] mb-[4px]">STEP 1 · 이메일</p>
+        <h2 className="font-bold text-[22px] text-[#0a0a0a] mb-[6px]">이메일을<br />입력해주세요</h2>
+        <p className="text-[13px] text-[#6a7282] mb-[28px]">로그인과 알림 수신에 사용돼요. 재학 여부는 다음 단계에서 학생증으로 확인해요.</p>
 
         <div className={`border-2 rounded-[14px] px-[16px] py-[14px] transition-colors ${isValid ? 'border-black' : 'border-[#e5e7eb]'}`}>
           <input
@@ -103,18 +103,18 @@ function EmailView({ onBack, onNext }: { onBack: () => void; onNext: (email: str
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            placeholder="예) student@chungbuk.ac.kr"
+            placeholder="예) hong@gmail.com"
             className="w-full text-[15px] text-[#0a0a0a] placeholder-[#99a1af] outline-none bg-transparent"
           />
         </div>
 
         {email.length > 0 && !isValid && (
-          <p className="text-[11px] text-[#e24b4a] mt-[8px]">.ac.kr 로 끝나는 학교 이메일을 입력해주세요</p>
+          <p className="text-[11px] text-[#e24b4a] mt-[8px]">올바른 이메일 형식을 입력해주세요</p>
         )}
 
         <div className="bg-[#f9fafb] rounded-[12px] p-[14px] mt-[20px]">
           <p className="text-[12px] text-[#6a7282] leading-[19px]">
-            · 재학 중인 학교의 공식 이메일만 사용할 수 있어요.<br />
+            · 본인 명의의 이메일을 사용해주세요.<br />
             · 이메일은 외부에 공개되지 않아요.
           </p>
         </div>
@@ -243,7 +243,7 @@ function PasswordView({ onBack, onDone }: { onBack: () => void; onDone: () => vo
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="학교 이메일"
+              placeholder="이메일"
               className="w-full text-[15px] text-[#0a0a0a] placeholder-[#99a1af] outline-none bg-transparent"
             />
           </div>

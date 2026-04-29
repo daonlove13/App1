@@ -24,9 +24,8 @@ function LandingView({ onEmailSignup, onLogin }: { onEmailSignup: () => void; on
       </div>
 
       {/* 로고 & 타이틀 */}
-      <div className="absolute left-0 right-0 top-[210px] flex flex-col items-center">
-        <p className="font-['Protest_Riot'] text-[148px] leading-none text-black">?</p>
-        <p className="font-['Protest_Riot'] text-[60px] leading-none text-black -mt-[10px]">indeed</p>
+      <div className="absolute left-0 right-0 top-[270px] flex flex-col items-center">
+        <p className="font-['Protest_Riot'] text-[96px] leading-none text-black">indeed</p>
       </div>
 
       {/* 슬로건 */}

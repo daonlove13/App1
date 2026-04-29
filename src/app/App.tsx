@@ -17,6 +17,7 @@ import MatchSuccessPage from './components/MatchSuccessPage';
 import RestaurantDetailPage, { type Restaurant } from './components/RestaurantDetailPage';
 import NotificationPage from './components/NotificationPage';
 import FlowView from './components/FlowView';
+import DevBar from './_dev/DevBar';
 
 // ── 타입 ───────────────────────────────────────────────────────
 type AppScreen = 'splash' | 'onboarding' | 'login' | 'studentIdUpload' | 'app';
@@ -55,6 +56,50 @@ export default function App() {
   const goTo = (page: SubPage) => setSubPage(page);
   const goBack = () => setSubPage('none');
 
+  const reset = () => {
+    setSubPage('none');
+    setActiveTab('home');
+    setAppScreen('splash');
+  };
+
+  const devBar = (
+    <DevBar
+      appScreen={appScreen}
+      activeTab={activeTab}
+      hasTeam={hasTeam}
+      onToggleTeam={() => setHasTeam(v => !v)}
+      onGoScreen={(s) => { setSubPage('none'); setAppScreen(s); }}
+      onGoTab={(t) => { setSubPage('none'); setAppScreen('app'); setActiveTab(t); }}
+      onGoSubPage={(s) => {
+        setAppScreen('app');
+        if (s === 'chatRoom') {
+          setOpenChat({
+            id: 1,
+            name: '경희대 경영학과',
+            initial: '경',
+            lastMessage: '안녕하세요!',
+            time: '12:30',
+            status: 'active',
+            unread: 0,
+          });
+        }
+        if (s === 'restaurant') {
+          setOpenRestaurant({
+            id: 1,
+            name: '치킨앤비어 중대점',
+            location: '서울',
+            district: '도봉구',
+            teamCount: 3,
+            seats: 20,
+          });
+        }
+        setSubPage(s);
+      }}
+      onReset={reset}
+      onShowFlow={() => setShowFlow(true)}
+    />
+  );
+
   /* ── 플로우 뷰 ──────────────────────────────────── */
   if (showFlow) {
     return (
@@ -70,16 +115,11 @@ export default function App() {
     );
   }
 
-  /* ── 스플래시 / 로그인 / 학생증 ──────────────────── */
+  /* ── 스플래시 / 온보딩 / 로그인 / 학생증 ──────────── */
   if (appScreen === 'splash') {
     return (
       <div className="size-full flex items-center justify-center bg-black">
-        <button
-          onClick={() => setShowFlow(true)}
-          className="fixed top-4 right-4 z-50 bg-white text-black text-[12px] font-semibold px-4 py-2 rounded-full shadow-lg hover:bg-gray-100 transition-colors"
-        >
-          🗺 플로우 보기
-        </button>
+        {devBar}
         <SplashScreen onDone={() => setAppScreen('onboarding')} />
       </div>
     );
@@ -88,12 +128,7 @@ export default function App() {
   if (appScreen === 'onboarding') {
     return (
       <div className="size-full flex items-center justify-center bg-gray-100">
-        <button
-          onClick={() => setShowFlow(true)}
-          className="fixed top-4 right-4 z-50 bg-black text-white text-[12px] font-semibold px-4 py-2 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
-        >
-          🗺 플로우 보기
-        </button>
+        {devBar}
         <OnboardingScreen onDone={() => setAppScreen('login')} />
       </div>
     );
@@ -102,12 +137,7 @@ export default function App() {
   if (appScreen === 'login') {
     return (
       <div className="size-full flex items-center justify-center bg-gray-100">
-        <button
-          onClick={() => setShowFlow(true)}
-          className="fixed top-4 right-4 z-50 bg-black text-white text-[12px] font-semibold px-4 py-2 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
-        >
-          🗺 플로우 보기
-        </button>
+        {devBar}
         <LoginScreen onLogin={() => setAppScreen('studentIdUpload')} />
       </div>
     );
@@ -116,12 +146,7 @@ export default function App() {
   if (appScreen === 'studentIdUpload') {
     return (
       <div className="size-full flex items-center justify-center bg-gray-100">
-        <button
-          onClick={() => setShowFlow(true)}
-          className="fixed top-4 right-4 z-50 bg-black text-white text-[12px] font-semibold px-4 py-2 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
-        >
-          🗺 플로우 보기
-        </button>
+        {devBar}
         <StudentIdUploadPage onDone={() => setAppScreen('app')} onBack={() => setAppScreen('login')} />
       </div>
     );
@@ -224,48 +249,8 @@ export default function App() {
   };
 
   return (
-    <div className="size-full flex flex-col items-center justify-center bg-gray-100 gap-4">
-      {/* 개발용 컨트롤 패널 */}
-      <div className="flex items-center gap-3 bg-white rounded-full px-5 py-2 shadow flex-wrap justify-center">
-        <div className="flex items-center gap-3">
-          <span className="text-[12px] text-gray-400">팀</span>
-          <button
-            onClick={() => setHasTeam(v => !v)}
-            className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${hasTeam ? 'bg-black' : 'bg-gray-300'}`}
-          >
-            <div className={`absolute top-[3px] w-[14px] h-[14px] bg-white rounded-full shadow transition-transform duration-200 ${hasTeam ? 'translate-x-[22px]' : 'translate-x-[3px]'}`} />
-          </button>
-          <span className="text-[12px] text-gray-400">{hasTeam ? '있음' : '없음'}</span>
-        </div>
-
-        <div className="w-px h-4 bg-gray-200" />
-
-        <button
-          onClick={() => goTo('matchSuccess')}
-          className="text-[12px] text-gray-500 hover:text-black transition-colors"
-        >
-          🎉 매칭 성사
-        </button>
-
-        <div className="w-px h-4 bg-gray-200" />
-
-        <button
-          onClick={() => setAppScreen('splash')}
-          className="text-[12px] text-gray-500 hover:text-black transition-colors"
-        >
-          ↩ 처음부터
-        </button>
-
-        <div className="w-px h-4 bg-gray-200" />
-
-        <button
-          onClick={() => setShowFlow(true)}
-          className="text-[12px] font-semibold text-white bg-black px-3 py-1 rounded-full hover:bg-gray-800 transition-colors"
-        >
-          🗺 플로우 보기
-        </button>
-      </div>
-
+    <div className="size-full flex items-center justify-center bg-gray-100">
+      {devBar}
       {renderScreen()}
     </div>
   );

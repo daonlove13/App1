@@ -42,8 +42,7 @@ export default function MatchingPage({ onTabChange, onOpenNotifications, onApply
       {/* ── Header ── */}
       <div className="absolute top-[44px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center justify-between border-b border-[#f3f4f6] h-[73px]">
         <div className="flex items-center gap-2">
-          <span className="font-['Protest_Riot'] text-[24px] leading-[32px]">?</span>
-          <span className="font-['Protest_Riot'] text-[20px] leading-[28px]">indeed</span>
+          <span className="font-['Protest_Riot'] text-[22px] leading-[28px]">indeed</span>
         </div>
         <button className="p-2 relative" onClick={onOpenNotifications}>
           <Bell size={24} />

@@ -1,4 +1,5 @@
 import { ChevronLeft, Heart } from 'lucide-react';
+import { useHistory, useProfile } from '../hooks/useData';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 
@@ -7,44 +8,15 @@ interface Props {
   onTabChange: (tab: Tab) => void;
 }
 
-interface MatchRecord {
-  id: number;
-  name: string;
-  date: string;
-  matchType: string;
-  size: string;
-  university: string;
-  place: string;
-  myMembers: string[];
-  theirMembers: string[];
+function Skeleton({ className }: { className?: string }) {
+  return <div className={`animate-pulse bg-[#f3f4f6] rounded-[12px] ${className}`} />;
 }
 
-const records: MatchRecord[] = [
-  {
-    id: 1,
-    name: '경영학과 이지원 팀',
-    date: '2025년 4월 8일 (목)',
-    matchType: '신입생 전용 매칭',
-    size: '2:2',
-    university: '충북대학교',
-    place: '치킨앤비어 충대점',
-    myMembers: ['나', '김'],
-    theirMembers: ['이', '박'],
-  },
-  {
-    id: 2,
-    name: '사회학과 김다은 팀',
-    date: '2025년 3월 21일 (금)',
-    matchType: '자유 매칭',
-    size: '2:2',
-    university: '충북대학교',
-    place: '이자카야 하나',
-    myMembers: ['나', '최'],
-    theirMembers: ['김', '이'],
-  },
-];
-
 export default function HistoryPage({ onBack, onTabChange }: Props) {
+  const { history, loading } = useHistory();
+  const { profile } = useProfile();
+  const penalties = profile?.penalties ?? 0;
+
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
 
@@ -65,12 +37,12 @@ export default function HistoryPage({ onBack, onTabChange }: Props) {
       {/* Content */}
       <div className="absolute top-[100px] left-0 right-0 bottom-[90px] overflow-y-auto px-4 pt-[18px]">
 
-        {/* 통계 카드 3개 */}
+        {/* 통계 카드 */}
         <div className="grid grid-cols-3 gap-[10px] mb-[20px]">
           {[
-            { value: 2, label: '총 과팅' },
-            { value: 2, label: '완료' },
-            { value: 0, label: '패널티' },
+            { value: history.length, label: '총 과팅' },
+            { value: history.length, label: '완료' },
+            { value: penalties,      label: '패널티' },
           ].map((stat, i) => (
             <div key={i} className="bg-[#f9fafb] rounded-[14px] py-[14px] flex flex-col items-center gap-[2px]">
               <span className="text-[24px] font-bold text-[#0a0a0a] leading-[32px]">{stat.value}</span>
@@ -79,60 +51,31 @@ export default function HistoryPage({ onBack, onTabChange }: Props) {
           ))}
         </div>
 
-        {/* 완료된 과팅 라벨 */}
         <p className="text-[12px] text-[#6a7282] mb-[10px]">완료된 과팅</p>
 
-        {/* 이력 카드 목록 */}
-        <div className="flex flex-col gap-[10px] pb-4">
-          {records.map(record => (
-            <div key={record.id} className="border border-[#e5e7eb] rounded-[14px] px-[16px] py-[14px]">
-
-              {/* 상단: 팀 이름 + 완료 배지 */}
-              <div className="flex items-center justify-between mb-[8px]">
-                <p className="font-semibold text-[14px] text-[#0a0a0a]">{record.name}</p>
-                <div className="bg-[#f3f4f6] border border-[#d1d5dc] rounded-full px-[8px] py-[2px]">
-                  <span className="text-[11px] text-[#0a0a0a]">완료</span>
+        {loading ? (
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-[120px]" />
+            <Skeleton className="h-[120px]" />
+          </div>
+        ) : history.length === 0 ? (
+          <div className="text-center py-12 text-[13px] text-[#99a1af]">아직 과팅 이력이 없어요</div>
+        ) : (
+          <div className="flex flex-col gap-[10px] pb-4">
+            {history.map(item => (
+              <div key={item.id} className="border border-[#e5e7eb] rounded-[14px] px-[16px] py-[14px]">
+                <div className="flex items-center justify-between mb-[8px]">
+                  <p className="font-semibold text-[14px] text-[#0a0a0a]">{item.name}</p>
+                  <div className="bg-[#f3f4f6] border border-[#d1d5dc] rounded-full px-[8px] py-[2px]">
+                    <span className="text-[11px] text-[#0a0a0a]">완료</span>
+                  </div>
                 </div>
+                <p className="text-[12px] text-[#6a7282] leading-[19.5px]">{item.date}</p>
+                <p className="text-[12px] font-medium text-black mt-[4px]">{item.place} 방문</p>
               </div>
-
-              {/* 날짜/유형/사이즈 */}
-              <p className="text-[12px] text-[#6a7282] leading-[19.5px]">
-                {record.date} · {record.matchType}
-              </p>
-              <p className="text-[12px] text-[#6a7282] leading-[19.5px] mb-[6px]">
-                {record.size} · {record.university}
-              </p>
-
-              {/* 방문 가게 */}
-              <p className="text-[12px] font-medium text-black mb-[10px]">
-                {record.place} 방문
-              </p>
-
-              {/* 멤버 아바타 */}
-              <div className="flex items-center gap-0">
-                {record.myMembers.map((m, i) => (
-                  <div
-                    key={`my-${i}`}
-                    className="w-[26px] h-[26px] rounded-full bg-black border-2 border-white flex items-center justify-center"
-                    style={{ marginLeft: i > 0 ? '-6px' : '0', zIndex: record.myMembers.length - i }}
-                  >
-                    <span className="text-white text-[10px] font-semibold">{m}</span>
-                  </div>
-                ))}
-                <span className="text-[10px] text-[#d1d5dc] mx-[6px]">vs</span>
-                {record.theirMembers.map((m, i) => (
-                  <div
-                    key={`their-${i}`}
-                    className="w-[26px] h-[26px] rounded-full bg-[#6a7282] border-2 border-white flex items-center justify-center"
-                    style={{ marginLeft: i > 0 ? '-6px' : '0', zIndex: record.theirMembers.length - i }}
-                  >
-                    <span className="text-white text-[10px] font-semibold">{m}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Bottom Navigation */}

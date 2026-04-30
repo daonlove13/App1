@@ -29,28 +29,6 @@ function Container() {
   );
 }
 
-function Container2() {
-  return <div className="bg-white rounded-[33554400px] shrink-0 size-[7px]" data-name="Container" />;
-}
-
-function Container3() {
-  return <div className="bg-[rgba(255,255,255,0.3)] rounded-[33554400px] shrink-0 size-[7px]" data-name="Container" />;
-}
-
-function Container4() {
-  return <div className="bg-[rgba(255,255,255,0.3)] rounded-[33554400px] shrink-0 size-[7px]" data-name="Container" />;
-}
-
-function Container1() {
-  return (
-    <div className="absolute content-stretch flex gap-[6px] h-[7px] items-start justify-center left-[91px] pl-[88.406px] pr-[88.422px] top-[613px] w-[209.828px]" data-name="Container">
-      <Container2 />
-      <Container3 />
-      <Container4 />
-    </div>
-  );
-}
-
 function Group() {
   return (
     <div className="absolute contents font-['Protest_Riot:Regular',sans-serif] leading-[normal] left-[102.28px] not-italic text-white top-[206px]">
@@ -84,7 +62,6 @@ export default function Splash() {
         <p className="-translate-x-1/2 absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-[normal] left-[52.35px] not-italic text-[16px] text-black text-center top-[15px] tracking-[0.5px] whitespace-nowrap">3:14</p>
       </div>
       <Container />
-      <Container1 />
       <Group />
     </div>
   );

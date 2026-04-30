@@ -1,26 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // ── 화면 컴포넌트 ──────────────────────────────────────────────
 import SplashScreen from './components/SplashScreen';
 import OnboardingScreen from './components/OnboardingScreen';
 import LoginScreen from './components/LoginScreen';
 import StudentIdUploadPage from './components/StudentIdUploadPage';
+import ProfileSetupPage from './components/ProfileSetupPage';
+import ApprovalCompletePage from './components/ApprovalCompletePage';
 import MainHome from './components/MainHome';
 import MatchingPage from './components/MatchingPage';
-import ChatPage, { type ChatItem } from './components/ChatPage';
+import ChatPage from './components/ChatPage';
+import type { ChatItem } from './components/ChatPage';
 import ChatRoomPage from './components/ChatRoomPage';
 import MyPage from './components/MyPage';
 import HistoryPage from './components/HistoryPage';
 import CreateTeamPage from './components/CreateTeamPage';
 import InviteLinkPage from './components/InviteLinkPage';
 import MatchSuccessPage from './components/MatchSuccessPage';
-import RestaurantDetailPage, { type Restaurant } from './components/RestaurantDetailPage';
+import RestaurantDetailPage from './components/RestaurantDetailPage';
+import type { Restaurant } from './components/RestaurantDetailPage';
 import NotificationPage from './components/NotificationPage';
 import FlowView from './components/FlowView';
 import DevBar from './_dev/DevBar';
 
+// ── 데이터 훅 ────────────────────────────────────────────────────
+import { useTeam, useNotifications } from './hooks/useData';
+import type { Team } from './services/api';
+
 // ── 타입 ───────────────────────────────────────────────────────
-type AppScreen = 'splash' | 'onboarding' | 'login' | 'studentIdUpload' | 'app';
+type AppScreen = 'splash' | 'onboarding' | 'login' | 'profileSetup' | 'studentIdUpload' | 'approvalComplete' | 'app';
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 type SubPage =
   | 'none'
@@ -36,16 +44,19 @@ type SubPage =
 export default function App() {
   const [showFlow, setShowFlow] = useState(false);
   const [appScreen, setAppScreen] = useState<AppScreen>('app');
-  const [hasTeam, setHasTeam] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>('home');
   const [subPage, setSubPage] = useState<SubPage>('none');
   const [openChat, setOpenChat] = useState<ChatItem | null>(null);
   const [openRestaurant, setOpenRestaurant] = useState<Restaurant | null>(null);
 
-  // 팀 생성 시 저장
-  const [createdTeamName, setCreatedTeamName] = useState('');
-  const [createdGender, setCreatedGender] = useState<'남성' | '여성'>('남성');
-  const [createdSize, setCreatedSize] = useState<'2v2' | '3v3'>('3v3');
+  // ── 실제 팀 데이터 (Supabase) ──────────────────────────────────
+  const { team, loading: teamLoading, create: createTeamApi, update: updateTeamApi, toggleApply } = useTeam();
+  const { unreadCount } = useNotifications();
+
+  // 팀 생성 시 임시 저장 (inviteLink 화면에 넘기기 위해)
+  const [pendingTeamName, setPendingTeamName] = useState('');
+  const [pendingGender, setPendingGender] = useState<'남성' | '여성'>('남성');
+  const [pendingSize, setPendingSize] = useState<'2v2' | '3v3'>('3v3');
 
   const handleTabChange = (tab: Tab) => {
     setSubPage('none');
@@ -66,8 +77,8 @@ export default function App() {
     <DevBar
       appScreen={appScreen}
       activeTab={activeTab}
-      hasTeam={hasTeam}
-      onToggleTeam={() => setHasTeam(v => !v)}
+      hasTeam={!!team}
+      onToggleTeam={() => {}} // 실제 데이터 연결 후 토글 불필요
       onGoScreen={(s) => { setSubPage('none'); setAppScreen(s); }}
       onGoTab={(t) => { setSubPage('none'); setAppScreen('app'); setActiveTab(t); }}
       onGoSubPage={(s) => {
@@ -75,8 +86,8 @@ export default function App() {
         if (s === 'chatRoom') {
           setOpenChat({
             id: 1,
-            name: '경희대 경영학과',
-            initial: '경',
+            name: '경영학과 이지원 팀',
+            initial: '이',
             lastMessage: '안녕하세요!',
             time: '12:30',
             status: 'active',
@@ -138,7 +149,19 @@ export default function App() {
     return (
       <div className="size-full flex items-center justify-center bg-gray-100">
         {devBar}
-        <LoginScreen onLogin={() => setAppScreen('studentIdUpload')} />
+        <LoginScreen onLogin={() => setAppScreen('profileSetup')} />
+      </div>
+    );
+  }
+
+  if (appScreen === 'profileSetup') {
+    return (
+      <div className="size-full flex items-center justify-center bg-gray-100">
+        {devBar}
+        <ProfileSetupPage
+          onBack={() => setAppScreen('login')}
+          onDone={() => setAppScreen('studentIdUpload')}
+        />
       </div>
     );
   }
@@ -147,7 +170,16 @@ export default function App() {
     return (
       <div className="size-full flex items-center justify-center bg-gray-100">
         {devBar}
-        <StudentIdUploadPage onDone={() => setAppScreen('app')} onBack={() => setAppScreen('login')} />
+        <StudentIdUploadPage onDone={() => setAppScreen('app')} onBack={() => setAppScreen('profileSetup')} />
+      </div>
+    );
+  }
+
+  if (appScreen === 'approvalComplete') {
+    return (
+      <div className="size-full flex items-center justify-center bg-gray-100">
+        {devBar}
+        <ApprovalCompletePage onDone={() => { setAppScreen('app'); goTo('createTeam'); }} />
       </div>
     );
   }
@@ -156,18 +188,36 @@ export default function App() {
   const renderScreen = () => {
     switch (subPage) {
       case 'chatRoom':
-        return openChat ? <ChatRoomPage chat={openChat} onBack={goBack} /> : null;
+        return openChat ? (
+          <ChatRoomPage
+            chat={openChat}
+            onBack={goBack}
+            onComplete={() => { /* 채팅 완료 후 처리 */ }}
+          />
+        ) : null;
       case 'history':
         return <HistoryPage onBack={goBack} onTabChange={handleTabChange} />;
       case 'createTeam':
         return (
           <CreateTeamPage
             onBack={goBack}
-            onDone={(name, gender, size) => {
-              setCreatedTeamName(name);
-              setCreatedGender(gender);
-              setCreatedSize(size);
-              setHasTeam(true);
+            onDone={async (name, gender, size) => {
+              // Supabase에 팀 생성
+              try {
+                await createTeamApi({
+                  teamName: name,
+                  gender,
+                  size,
+                  members: [{ id: 'u1', name: '홍길동', role: '팀장', initial: '나' }],
+                  maxMembers: size === '2v2' ? 2 : 3,
+                  applied: false,
+                });
+              } catch (e) {
+                console.error('팀 생성 오류:', e);
+              }
+              setPendingTeamName(name);
+              setPendingGender(gender);
+              setPendingSize(size);
               goTo('inviteLink');
             }}
           />
@@ -175,9 +225,9 @@ export default function App() {
       case 'inviteLink':
         return (
           <InviteLinkPage
-            teamName={createdTeamName}
-            gender={createdGender}
-            size={createdSize}
+            teamName={pendingTeamName || team?.teamName || ''}
+            gender={pendingGender || team?.gender || '남성'}
+            size={pendingSize || team?.size || '3v3'}
             onBack={() => goTo('createTeam')}
             onDone={goBack}
           />
@@ -214,20 +264,32 @@ export default function App() {
       case 'home':
         return (
           <MainHome
-            hasTeam={hasTeam}
+            team={team}
+            teamLoading={teamLoading}
             onTabChange={handleTabChange}
             onCreateTeam={() => goTo('createTeam')}
             onInviteTeam={() => goTo('inviteLink')}
             onOpenRestaurant={(r) => { setOpenRestaurant(r); goTo('restaurant'); }}
             onOpenNotifications={() => goTo('notifications')}
+            onToggleApply={async () => {
+              try { await toggleApply(); }
+              catch (e) { console.error('과팅 신청 오류:', e); }
+            }}
+            unreadCount={unreadCount}
           />
         );
       case 'matching':
         return (
           <MatchingPage
+            team={team}
             onTabChange={handleTabChange}
             onOpenNotifications={() => goTo('notifications')}
             onApply={() => goTo('matchSuccess')}
+            onUpdateTeam={async (updated) => {
+              try { await updateTeamApi(updated); }
+              catch (e) { console.error('팀 업데이트 오류:', e); }
+            }}
+            unreadCount={unreadCount}
           />
         );
       case 'chat':
@@ -236,6 +298,7 @@ export default function App() {
             onTabChange={handleTabChange}
             onOpenRoom={(chat) => { setOpenChat(chat); goTo('chatRoom'); }}
             onOpenNotifications={() => goTo('notifications')}
+            unreadCount={unreadCount}
           />
         );
       case 'my':

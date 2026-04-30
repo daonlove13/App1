@@ -1,7 +1,9 @@
 import Splash from '../../imports/Splash';
 import Login from '../../imports/Login';
 import OnboardingScreen from './OnboardingScreen';
+import ProfileSetupPage from './ProfileSetupPage';
 import StudentIdUploadPage from './StudentIdUploadPage';
+import ApprovalCompletePage from './ApprovalCompletePage';
 import MainHome from './MainHome';
 import MatchingPage from './MatchingPage';
 import ChatPage, { type ChatItem } from './ChatPage';
@@ -13,12 +15,14 @@ import InviteLinkPage from './InviteLinkPage';
 import MatchSuccessPage from './MatchSuccessPage';
 import RestaurantDetailPage from './RestaurantDetailPage';
 import NotificationPage from './NotificationPage';
+import type { Team } from '../services/api';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 
 const noop = () => {};
 const noopTab = (_: Tab) => {};
 const noopDone = (_a: string, _b: '남성' | '여성', _c: '2v2' | '3v3') => {};
+const noopTeam = (_: Team) => {};
 
 const dummyChat: ChatItem = {
   id: 1,
@@ -30,6 +34,20 @@ const dummyChat: ChatItem = {
   unread: 2,
 };
 
+const dummyTeam: Team = {
+  teamName: '충북대 심리학과팀',
+  gender: '남성',
+  size: '3v3',
+  members: [
+    { id: 'u1', name: '홍길동', role: '팀장', initial: '홍' },
+    { id: 'u2', name: '김철수', role: '팀원', initial: '김' },
+  ],
+  maxMembers: 3,
+  applied: false,
+};
+
+const dummyTeamApplied: Team = { ...dummyTeam, applied: true };
+
 /* ── 스케일 상수 ─────────────────────────────────────────────── */
 const SCALE = 0.295;
 const PW = 390;
@@ -37,7 +55,7 @@ const PH = 844;
 const CW = Math.round(PW * SCALE);
 const CH = Math.round(PH * SCALE);
 
-/* ── 화면 카드 ─────────────────────��────────────────────────── */
+/* ── 화면 카드 ───────────────────────────────────────────────── */
 interface ScreenCardProps {
   label: string;
   sublabel?: string;
@@ -87,7 +105,14 @@ function Arrow({ label, vertical = false }: { label?: string; vertical?: boolean
         {label && <span className="text-[9px] text-gray-400 whitespace-nowrap">{label}</span>}
         <div className="flex flex-col items-center">
           <div className="w-px h-6 bg-gray-300" />
-          <div className="border-l-4 border-r-4 border-t-6 border-l-transparent border-r-transparent border-t-gray-300" style={{ borderTopWidth: 6 }} />
+          <div
+            style={{
+              width: 0, height: 0,
+              borderLeft: '4px solid transparent',
+              borderRight: '4px solid transparent',
+              borderTop: '6px solid #d1d5db',
+            }}
+          />
         </div>
       </div>
     );
@@ -144,28 +169,82 @@ export default function FlowView() {
 
       <div className="p-8 flex flex-col gap-10">
 
-        {/* ── ① 온보딩 ── */}
+        {/* ── ① 온보딩 플로우 ── */}
         <section>
-          <SectionHeader num="1" title="온보딩" color="bg-black" />
-          <div className="flex items-start gap-3 flex-wrap">
+          <SectionHeader num="1" title="온보딩 · 회원가입 플로우" color="bg-black" />
+
+          {/* Row 1: 스플래시 → 온보딩 → 로그인 → 개인정보 */}
+          <div className="flex items-start gap-3 flex-wrap mb-6">
             <ScreenCard label="스플래시" sublabel="2초 후 자동 전환" tag="앱 시작" tagColor="bg-gray-500">
               <Splash />
             </ScreenCard>
             <Arrow label="자동" />
-            <ScreenCard label="온보딩 소개" sublabel="3슬라이드 / 건너뛰기" tag="신규" tagColor="bg-blue-500">
+            <ScreenCard label="온보딩 소개" sublabel="3슬라이드 / 건너뛰기" tag="기존" tagColor="bg-gray-400">
               <OnboardingScreen onDone={noop} />
             </ScreenCard>
             <Arrow label="시작하기 →" />
-            <ScreenCard label="로그인 / 가입" sublabel="개인 이메일 인증" tag="수정됨" tagColor="bg-purple-500">
+            <ScreenCard label="로그인 / 이메일 가입" sublabel="개인 이메일 인증" tag="기존" tagColor="bg-gray-400">
               <Login />
             </ScreenCard>
-            <Arrow label="가입 완료" />
-            <ScreenCard label="학생증 인증" sublabel="사진 업로드 → 대기" tag="신규" tagColor="bg-blue-500">
+            <Arrow label="인증 완료 →" />
+            <ScreenCard
+              label="개인정보 입력"
+              sublabel="이름·학과·학번·성별·전화"
+              tag="신규 ✦"
+              tagColor="bg-blue-500"
+            >
+              <ProfileSetupPage onBack={noop} onDone={noop} />
+            </ScreenCard>
+          </div>
+
+          {/* Row 2: 학생증 업로드 → 심사 중 → 승인 완료 → 홈 */}
+          <div className="flex items-start gap-3 flex-wrap pl-4">
+            <div className="flex items-center self-center mb-5 shrink-0">
+              <div className="h-px w-6 bg-gray-300" />
+              <div
+                style={{
+                  width: 0, height: 0,
+                  borderTop: '5px solid transparent',
+                  borderBottom: '5px solid transparent',
+                  borderLeft: '7px solid #d1d5db',
+                }}
+              />
+            </div>
+            <ScreenCard
+              label="학생증 업로드"
+              sublabel="사진 선택 or 촬영"
+              tag="수정됨 ✦"
+              tagColor="bg-purple-500"
+            >
               <StudentIdUploadPage onDone={noop} />
             </ScreenCard>
-            <Arrow label="승인 완료" />
-            <ScreenCard label="홈" sublabel="첫 진입">
-              <MainHome hasTeam={false} onTabChange={noopTab} onCreateTeam={noop} onInviteTeam={noop} />
+            <Arrow label="업로드 →" />
+            <ScreenCard
+              label="심사 중 (대기 화면)"
+              sublabel="30분 이내 · 밸런스게임 · 대기현황"
+              tag="개선됨 ✦"
+              tagColor="bg-purple-500"
+            >
+              <StudentIdUploadPage onDone={noop} defaultState="pending" />
+            </ScreenCard>
+            <Arrow label="승인 완료 →" />
+            <ScreenCard
+              label="학생증 승인 완료"
+              sublabel='"승인됐어요!" 팀 만들기 유도'
+              tag="신규 ✦"
+              tagColor="bg-blue-500"
+            >
+              <ApprovalCompletePage onDone={noop} />
+            </ScreenCard>
+            <Arrow label="홈으로 →" />
+            <ScreenCard label="홈 (첫 진입)" sublabel="팀 없는 상태 · D-N 배너" tag="수정됨 ✦" tagColor="bg-purple-500">
+              <MainHome
+                team={null}
+                teamLoading={false}
+                onTabChange={noopTab}
+                onCreateTeam={noop}
+                onInviteTeam={noop}
+              />
             </ScreenCard>
           </div>
         </section>
@@ -177,14 +256,20 @@ export default function FlowView() {
           <SectionHeader num="2" title="팀 만들기 플로우" color="bg-gray-700" />
           <div className="flex items-start gap-3 flex-wrap">
             <ScreenCard label="홈 (팀 없음)" sublabel="팀 만들기 유도" tag="팀 없음" tagColor="bg-orange-400">
-              <MainHome hasTeam={false} onTabChange={noopTab} onCreateTeam={noop} onInviteTeam={noop} />
+              <MainHome
+                team={null}
+                teamLoading={false}
+                onTabChange={noopTab}
+                onCreateTeam={noop}
+                onInviteTeam={noop}
+              />
             </ScreenCard>
             <Arrow label="팀 만들기 →" />
-            <ScreenCard label="팀 만들기" sublabel="이름 · 성별 · 인원" tag="수정됨" tagColor="bg-purple-500">
+            <ScreenCard label="팀 만들기" sublabel="이름 · 성별 · 인원" tag="기존" tagColor="bg-gray-400">
               <CreateTeamPage onBack={noop} onDone={noopDone} />
             </ScreenCard>
             <Arrow label="완료 →" />
-            <ScreenCard label="팀원 초대 링크" sublabel="링크 복사 · 카톡 공유" tag="신규" tagColor="bg-blue-500">
+            <ScreenCard label="팀원 초대 링크" sublabel="링크 복사 · 카톡 공유" tag="기존" tagColor="bg-gray-400">
               <InviteLinkPage onBack={noop} onDone={noop} />
             </ScreenCard>
           </div>
@@ -197,15 +282,27 @@ export default function FlowView() {
           <SectionHeader num="3" title="과팅 신청 플로우" color="bg-gray-700" />
           <div className="flex items-start gap-3 flex-wrap">
             <ScreenCard label="홈 (팀 있음)" sublabel="신청 전" tag="팀 있음" tagColor="bg-green-500">
-              <MainHome hasTeam={true} onTabChange={noopTab} onCreateTeam={noop} onInviteTeam={noop} appliedState={false} />
+              <MainHome
+                team={dummyTeam}
+                teamLoading={false}
+                onTabChange={noopTab}
+                onCreateTeam={noop}
+                onInviteTeam={noop}
+              />
             </ScreenCard>
             <Arrow label="과팅 신청하기 →" />
-            <ScreenCard label="홈 (대기 중)" sublabel="신청 후 상태" tag="수정됨" tagColor="bg-purple-500">
-              <MainHome hasTeam={true} onTabChange={noopTab} onCreateTeam={noop} onInviteTeam={noop} appliedState={true} />
+            <ScreenCard label="홈 (대기 중)" sublabel="신청 후 상태" tag="팀 있음" tagColor="bg-green-500">
+              <MainHome
+                team={dummyTeamApplied}
+                teamLoading={false}
+                onTabChange={noopTab}
+                onCreateTeam={noop}
+                onInviteTeam={noop}
+              />
             </ScreenCard>
             <Arrow label="매칭 성사 →" />
-            <ScreenCard label="매칭 성사 알림" sublabel="채팅 입장 유도" tag="신규" tagColor="bg-blue-500">
-              <MatchSuccessPage onGoToChat={noop} onLater={noop} />
+            <ScreenCard label="매칭 성사 알림" sublabel="채팅 입장 유도" tag="기존" tagColor="bg-gray-400">
+              <MatchSuccessPage department="경영학과" onGoToChat={noop} onLater={noop} />
             </ScreenCard>
           </div>
         </section>
@@ -217,7 +314,12 @@ export default function FlowView() {
           <SectionHeader num="4" title="하단 탭 네비게이션" color="bg-gray-600" />
           <div className="flex items-start gap-3 flex-wrap">
             <ScreenCard label="매칭 설정" sublabel="2:2 / 3:3 선택">
-              <MatchingPage onTabChange={noopTab} />
+              <MatchingPage
+                team={null}
+                onTabChange={noopTab}
+                onApply={noop}
+                onUpdateTeam={noopTeam}
+              />
             </ScreenCard>
             <Arrow />
             <ScreenCard label="채팅 목록">
@@ -232,22 +334,29 @@ export default function FlowView() {
 
         <Divider />
 
-        {/* ── 홈 헤더 액션 ── */}
+        {/* ── ⑤ 홈 헤더 액션 ── */}
         <section>
           <SectionHeader num="5" title="홈 헤더 액션 (알림·식당)" color="bg-gray-600" />
           <div className="flex items-start gap-3 flex-wrap">
             <ScreenCard label="홈 (팀 있음)" sublabel="헤더 아이콘 진입점">
-              <MainHome hasTeam={true} onTabChange={noopTab} onCreateTeam={noop} onInviteTeam={noop} />
+              <MainHome
+                team={dummyTeam}
+                teamLoading={false}
+                onTabChange={noopTab}
+                onCreateTeam={noop}
+                onInviteTeam={noop}
+              />
             </ScreenCard>
             <Arrow label="🔔 알림 →" />
-            <ScreenCard label="알림 목록" sublabel="매칭·채팅·시스템" tag="신규" tagColor="bg-blue-500">
+            <ScreenCard label="알림 목록" sublabel="매칭·채팅·시스템" tag="기존" tagColor="bg-gray-400">
               <NotificationPage onBack={noop} />
             </ScreenCard>
             <Arrow label="식당 카드 →" />
-            <ScreenCard label="식당 상세" sublabel="대기 팀·매칭 신청" tag="신규" tagColor="bg-blue-500">
+            <ScreenCard label="식당 상세" sublabel="대기 팀·매칭 신청" tag="기존" tagColor="bg-gray-400">
               <RestaurantDetailPage
                 restaurant={{ id: 1, name: '치킨앤비어 중대점', location: '서울', district: '도봉구', teamCount: 3, seats: 20 }}
                 onBack={noop}
+                onApply={noop}
               />
             </ScreenCard>
           </div>
@@ -269,14 +378,15 @@ export default function FlowView() {
           </div>
         </section>
 
-        {/* 범례 */}
+        {/* ── 범례 ── */}
         <div className="border border-gray-200 rounded-[14px] bg-white p-5 inline-flex flex-col gap-2.5 self-start">
           <p className="text-[11px] font-bold text-gray-700 mb-1">범례</p>
           {[
             { color: 'bg-blue-500', label: '신규 추가된 화면' },
-            { color: 'bg-purple-500', label: '수정된 화면' },
+            { color: 'bg-purple-500', label: '수정 / 개선된 화면' },
             { color: 'bg-orange-400', label: '팀 없는 상태' },
             { color: 'bg-green-500', label: '팀 있는 상태' },
+            { color: 'bg-gray-400', label: '기존 유지 화면' },
             { color: 'bg-gray-500', label: '공통 / 온보딩' },
           ].map(({ color, label }) => (
             <div key={label} className="flex items-center gap-2">

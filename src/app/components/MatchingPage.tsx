@@ -1,35 +1,69 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bell, X, UserPlus } from 'lucide-react';
 import BottomNav from './BottomNav';
+import type { Team, TeamMember } from '../services/api';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 
-interface Member {
-  id: number;
-  name: string;
-  role: '팀장' | '팀원';
-  initial: string;
-}
-
 interface Props {
+  team: Team | null;
   onTabChange: (tab: Tab) => void;
   onOpenNotifications?: () => void;
   onApply?: () => void;
+  onUpdateTeam?: (team: Team) => void;
+  unreadCount?: number;
 }
 
-export default function MatchingPage({ onTabChange, onOpenNotifications, onApply }: Props) {
-  const [teamSize, setTeamSize] = useState<'2v2' | '3v3'>('2v2');
-  const [matchType, setMatchType] = useState<'freshman' | 'free'>('freshman');
-  const [members, setMembers] = useState<Member[]>([
-    { id: 1, name: '홍길동', role: '팀장', initial: '나' },
-    { id: 2, name: '김민준', role: '팀원', initial: '김' },
-  ]);
+function Skeleton({ className }: { className?: string }) {
+  return <div className={`animate-pulse bg-[#f3f4f6] rounded-[12px] ${className}`} />;
+}
 
-  const removeMember = (id: number) => {
+export default function MatchingPage({ team, onTabChange, onOpenNotifications, onApply, onUpdateTeam, unreadCount = 0 }: Props) {
+  const [teamSize, setTeamSize] = useState<'2v2' | '3v3'>(team?.size ?? '2v2');
+  const [matchType, setMatchType] = useState<'freshman' | 'free'>('freshman');
+  const [members, setMembers] = useState<TeamMember[]>(team?.members ?? []);
+  const [saving, setSaving] = useState(false);
+
+  // team 바뀌면 로컬 상태 동기화
+  useEffect(() => {
+    if (team) {
+      setTeamSize(team.size);
+      setMembers(team.members);
+    }
+  }, [team]);
+
+  const removeMember = (id: string) => {
     setMembers(prev => prev.filter(m => m.id !== id));
   };
 
   const maxMembers = teamSize === '2v2' ? 2 : 3;
+
+  const handleSave = async () => {
+    if (!team) return;
+    setSaving(true);
+    try {
+      await onUpdateTeam?.({
+        ...team,
+        size: teamSize,
+        members,
+        maxMembers,
+      });
+      onTabChange('home');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveAndApply = async () => {
+    if (!team) return;
+    setSaving(true);
+    try {
+      await onUpdateTeam?.({ ...team, size: teamSize, members, maxMembers });
+      onApply?.();
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]" data-name="MatchingPage">
@@ -41,12 +75,10 @@ export default function MatchingPage({ onTabChange, onOpenNotifications, onApply
 
       {/* ── Header ── */}
       <div className="absolute top-[44px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center justify-between border-b border-[#f3f4f6] h-[73px]">
-        <div className="flex items-center gap-2">
-          <span className="font-['Protest_Riot'] text-[22px] leading-[28px]">indeed</span>
-        </div>
+        <span className="font-['Protest_Riot'] text-[22px] leading-[28px]">indeed</span>
         <button className="p-2 relative" onClick={onOpenNotifications}>
           <Bell size={24} />
-          <div className="absolute top-1 right-1 w-2 h-2 bg-black rounded-full" />
+          {unreadCount > 0 && <div className="absolute top-1 right-1 w-2 h-2 bg-black rounded-full" />}
         </button>
       </div>
 
@@ -60,6 +92,14 @@ export default function MatchingPage({ onTabChange, onOpenNotifications, onApply
         </div>
 
         <div className="px-4 pt-5 pb-4 flex flex-col gap-6">
+
+          {/* 팀이 없을 때 안내 */}
+          {!team && (
+            <div className="bg-[#f9fafb] rounded-[14px] p-4 text-center">
+              <p className="text-[14px] font-medium text-[#0a0a0a] mb-1">아직 팀이 없어요</p>
+              <p className="text-[12px] text-[#6a7282]">홈에서 팀을 먼저 만들어주세요</p>
+            </div>
+          )}
 
           {/* 인원 선택 */}
           <div>
@@ -90,7 +130,7 @@ export default function MatchingPage({ onTabChange, onOpenNotifications, onApply
           {/* 팀원 구성 */}
           <div>
             <p className="text-[12px] text-[#6a7282] mb-[10px]">
-              팀원 구성 <span className="text-[#0a0a0a]">(심리학과만)</span>
+              팀원 구성{team ? <span className="text-[#0a0a0a]"> ({team.gender})</span> : ''}
             </p>
             <div className="flex flex-col gap-2">
               {members.map(member => (
@@ -134,7 +174,7 @@ export default function MatchingPage({ onTabChange, onOpenNotifications, onApply
             <div className="flex gap-2 flex-wrap">
               {([
                 { key: 'freshman', label: '신입생 전용' },
-                { key: 'free', label: '자유 매칭' },
+                { key: 'free',     label: '자유 매칭' },
               ] as const).map(({ key, label }) => (
                 <button
                   key={key}
@@ -154,14 +194,16 @@ export default function MatchingPage({ onTabChange, onOpenNotifications, onApply
           {/* 버튼 */}
           <div className="flex flex-col gap-3">
             <button
-              onClick={() => onTabChange('home')}
-              className="w-full bg-black text-white rounded-[14px] py-[15px] text-[15px] font-semibold active:bg-gray-800"
+              onClick={handleSave}
+              disabled={saving || !team}
+              className="w-full bg-black text-white rounded-[14px] py-[15px] text-[15px] font-semibold active:bg-gray-800 disabled:opacity-50"
             >
-              저장하고 돌아가기
+              {saving ? '저장 중...' : '저장하고 돌아가기'}
             </button>
             <button
-              onClick={onApply}
-              className="w-full bg-white border-2 border-black text-black rounded-[14px] py-[14px] text-[15px] font-semibold active:bg-gray-100"
+              onClick={handleSaveAndApply}
+              disabled={saving || !team}
+              className="w-full bg-white border-2 border-black text-black rounded-[14px] py-[14px] text-[15px] font-semibold active:bg-gray-100 disabled:opacity-50"
             >
               저장하고 즉시 매칭 →
             </button>

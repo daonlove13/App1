@@ -5,8 +5,9 @@
 
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { resetAll } from '../services/api';
 
-export type AppScreenKey = 'splash' | 'onboarding' | 'login' | 'studentIdUpload' | 'app';
+export type AppScreenKey = 'splash' | 'onboarding' | 'login' | 'profileSetup' | 'studentIdUpload' | 'approvalComplete' | 'app';
 export type TabKey = 'home' | 'matching' | 'chat' | 'my';
 export type SubPageKey =
   | 'matchSuccess'
@@ -33,7 +34,9 @@ const SCREENS: { key: AppScreenKey; label: string }[] = [
   { key: 'splash', label: '스플래시' },
   { key: 'onboarding', label: '온보딩' },
   { key: 'login', label: '로그인' },
+  { key: 'profileSetup', label: '개인정보' },
   { key: 'studentIdUpload', label: '학생증' },
+  { key: 'approvalComplete', label: '승인완료' },
   { key: 'app', label: '앱(홈)' },
 ];
 
@@ -100,28 +103,39 @@ export default function DevBar({
   onShowFlow,
 }: Props) {
   const [open, setOpen] = useState(false);
+  const [resetting, setResetting] = useState(false);
+
+  const handleResetData = async () => {
+    if (!confirm('Supabase 데이터를 모두 초기화할까요? 기본 시드 데이터로 돌아가요.')) return;
+    setResetting(true);
+    try {
+      await resetAll();
+      window.location.reload();
+    } catch (e) {
+      alert('초기화 실패: ' + e);
+    } finally {
+      setResetting(false);
+    }
+  };
 
   return (
     <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-white rounded-2xl shadow-lg border border-gray-200 max-w-[640px]">
       {/* 컴팩트 헤더 */}
       <div className="flex items-center gap-3 px-4 py-2">
         <span className="text-[10px] font-bold text-white bg-black px-2 py-0.5 rounded-full tracking-wider">DEV</span>
-
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] text-gray-400">팀</span>
-          <button
-            onClick={onToggleTeam}
-            className={`relative w-9 h-[18px] rounded-full transition-colors ${hasTeam ? 'bg-black' : 'bg-gray-300'}`}
-          >
-            <div className={`absolute top-[2px] w-[14px] h-[14px] bg-white rounded-full shadow transition-transform ${hasTeam ? 'translate-x-[20px]' : 'translate-x-[2px]'}`} />
-          </button>
-          <span className="text-[11px] text-gray-500 w-7">{hasTeam ? '있음' : '없음'}</span>
-        </div>
+        <span className="text-[10px] text-green-600 font-semibold">● Supabase 연결됨</span>
 
         <div className="w-px h-4 bg-gray-200" />
 
         <button onClick={onReset} className="text-[11px] text-gray-500 hover:text-black">↩ 처음</button>
         <button onClick={onShowFlow} className="text-[11px] text-gray-500 hover:text-black">🗺 플로우</button>
+        <button
+          onClick={handleResetData}
+          disabled={resetting}
+          className="text-[11px] text-red-400 hover:text-red-600 disabled:opacity-50"
+        >
+          {resetting ? '초기화 중...' : '🗑 데이터 초기화'}
+        </button>
 
         <div className="w-px h-4 bg-gray-200" />
 

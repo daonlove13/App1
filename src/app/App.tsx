@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+import { supabase } from './services/supabaseClient';
 
 // ── 화면 컴포넌트 ──────────────────────────────────────────────
 import SplashScreen from './components/SplashScreen';
@@ -10,7 +12,7 @@ import ApprovalCompletePage from './components/ApprovalCompletePage';
 import MainHome from './components/MainHome';
 import MatchingPage from './components/MatchingPage';
 import ChatPage from './components/ChatPage';
-import type { ChatItem } from './components/ChatPage';
+import type { ChatItem } from './services/api';
 import ChatRoomPage from './components/ChatRoomPage';
 import MyPage from './components/MyPage';
 import HistoryPage from './components/HistoryPage';
@@ -28,7 +30,17 @@ import { useTeam, useNotifications } from './hooks/useData';
 import type { Team } from './services/api';
 
 // ── 타입 ───────────────────────────────────────────────────────
-type AppScreen = 'splash' | 'onboarding' | 'login' | 'profileSetup' | 'studentIdUpload' | 'approvalComplete' | 'app';
+type AppScreen =
+  | 'loading'
+  | 'splash'
+  | 'onboarding'
+  | 'login'
+  | 'profileSetup'
+  | 'studentIdUpload'
+  | 'studentIdPending'
+  | 'approvalComplete'
+  | 'app';
+
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 type SubPage =
   | 'none'
@@ -43,7 +55,7 @@ type SubPage =
 // ── 앱 ────────────────────────────────────────────────────────
 export default function App() {
   const [showFlow, setShowFlow] = useState(false);
-  const [appScreen, setAppScreen] = useState<AppScreen>('app');
+  const [appScreen, setAppScreen] = useState<AppScreen>('loading');
   const [activeTab, setActiveTab] = useState<Tab>('home');
   const [subPage, setSubPage] = useState<SubPage>('none');
   const [openChat, setOpenChat] = useState<ChatItem | null>(null);
@@ -53,10 +65,71 @@ export default function App() {
   const { team, loading: teamLoading, create: createTeamApi, update: updateTeamApi, toggleApply } = useTeam();
   const { unreadCount } = useNotifications();
 
-  // 팀 생성 시 임시 저장 (inviteLink 화면에 넘기기 위해)
   const [pendingTeamName, setPendingTeamName] = useState('');
   const [pendingGender, setPendingGender] = useState<'남성' | '여성'>('남성');
   const [pendingSize, setPendingSize] = useState<'2v2' | '3v3'>('3v3');
+
+  // ── 세션 체크: 앱 시작 시 인증 + verified 상태 확인 ──────────────
+  useEffect(() => {
+    let mounted = true;
+
+    async function checkSession() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session) {
+          // 비로그인 → splash부터 시작
+          if (mounted) setAppScreen('splash');
+          return;
+        }
+
+        // 로그인 상태 → 유저 레코드 확인
+        const { data: userData } = await supabase
+          .from('users')
+          .select('verified, student_card_url, name')
+          .eq('id', session.user.id)
+          .maybeSingle();
+
+        if (!mounted) return;
+
+        if (!userData || !userData.name) {
+          // 유저 레코드 없음 (회원가입 후 프로필 미작성) → 프로필 설정
+          setAppScreen('profileSetup');
+          return;
+        }
+
+        if (userData.verified) {
+          // 승인 완료 → 메인 앱
+          setAppScreen('app');
+        } else if (userData.student_card_url) {
+          // 학생증 제출 완료, 아직 미승인 → 대기 화면
+          setAppScreen('studentIdPending');
+        } else {
+          // 학생증 미제출 → 업로드 화면
+          setAppScreen('studentIdUpload');
+        }
+      } catch (e) {
+        console.error('Session check error:', e);
+        if (mounted) setAppScreen('splash');
+      }
+    }
+
+    checkSession();
+
+    // Auth 상태 변경 리스너 (로그아웃 시 자동으로 처리)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT' && mounted) {
+        setAppScreen('splash');
+        setSubPage('none');
+        setActiveTab('home');
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const handleTabChange = (tab: Tab) => {
     setSubPage('none');
@@ -73,13 +146,13 @@ export default function App() {
     setAppScreen('splash');
   };
 
-  const devBar = (
+  const devBar = import.meta.env.DEV ? (
     <DevBar
       appScreen={appScreen}
       activeTab={activeTab}
       hasTeam={!!team}
-      onToggleTeam={() => {}} // 실제 데이터 연결 후 토글 불필요
-      onGoScreen={(s) => { setSubPage('none'); setAppScreen(s); }}
+      onToggleTeam={() => {}}
+      onGoScreen={(s) => { setSubPage('none'); setAppScreen(s as AppScreen); }}
       onGoTab={(t) => { setSubPage('none'); setAppScreen('app'); setActiveTab(t); }}
       onGoSubPage={(s) => {
         setAppScreen('app');
@@ -109,7 +182,7 @@ export default function App() {
       onReset={reset}
       onShowFlow={() => setShowFlow(true)}
     />
-  );
+  ) : null;
 
   /* ── 플로우 뷰 ──────────────────────────────────── */
   if (showFlow) {
@@ -126,7 +199,19 @@ export default function App() {
     );
   }
 
-  /* ── 스플래시 / 온보딩 / 로그인 / 학생증 ──────────── */
+  /* ── 로딩 화면 ─────────────────────────────────── */
+  if (appScreen === 'loading') {
+    return (
+      <div className="size-full flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <p className="font-['Protest_Riot'] text-[48px] leading-none text-black">indeed</p>
+          <Loader2 size={24} className="text-black animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  /* ── 스플래시 / 온보딩 / 로그인 ──────────────────── */
   if (appScreen === 'splash') {
     return (
       <div className="size-full flex items-center justify-center bg-black">
@@ -149,7 +234,18 @@ export default function App() {
     return (
       <div className="size-full flex items-center justify-center bg-gray-100">
         {devBar}
-        <LoginScreen onLogin={() => setAppScreen('profileSetup')} />
+        <LoginScreen
+          onSignup={() => setAppScreen('profileSetup')}
+          onLogin={(verified, hasCard) => {
+            if (verified) {
+              setAppScreen('app');
+            } else if (hasCard) {
+              setAppScreen('studentIdPending');
+            } else {
+              setAppScreen('studentIdUpload');
+            }
+          }}
+        />
       </div>
     );
   }
@@ -170,7 +266,28 @@ export default function App() {
     return (
       <div className="size-full flex items-center justify-center bg-gray-100">
         {devBar}
-        <StudentIdUploadPage onDone={() => setAppScreen('app')} onBack={() => setAppScreen('profileSetup')} />
+        <StudentIdUploadPage
+          defaultState="idle"
+          onDone={() => setAppScreen('studentIdPending')}
+          onBack={() => setAppScreen('profileSetup')}
+        />
+      </div>
+    );
+  }
+
+  // 학생증 제출 완료 → 심사 대기 화면 (홈 접근 불가)
+  if (appScreen === 'studentIdPending') {
+    return (
+      <div className="size-full flex items-center justify-center bg-gray-100">
+        {devBar}
+        <StudentIdUploadPage
+          defaultState="pending"
+          onDone={() => {
+            // 대기 화면에서 "홈에서 기다릴게요" → 아직 미승인이므로 계속 대기
+            // (실제 서비스에서는 verified=true가 되면 앱으로 이동)
+            // 여기서는 UX를 위해 현 상태 유지 or 재확인
+          }}
+        />
       </div>
     );
   }
@@ -184,6 +301,10 @@ export default function App() {
     );
   }
 
+  /* ── verified=false 상태에서 app 접근 시도 시 차단 ──── */
+  // (이 로직은 위의 loading 단계에서 이미 처리되므로
+  //  앱 런타임 중 추가 게이팅은 useProfile로 확인)
+
   /* ── 메인 앱 ────────────────────────────────────── */
   const renderScreen = () => {
     switch (subPage) {
@@ -192,7 +313,7 @@ export default function App() {
           <ChatRoomPage
             chat={openChat}
             onBack={goBack}
-            onComplete={() => { /* 채팅 완료 후 처리 */ }}
+            onComplete={() => {}}
           />
         ) : null;
       case 'history':
@@ -202,13 +323,12 @@ export default function App() {
           <CreateTeamPage
             onBack={goBack}
             onDone={async (name, gender, size) => {
-              // Supabase에 팀 생성
               try {
                 await createTeamApi({
                   teamName: name,
                   gender,
                   size,
-                  members: [{ id: 'u1', name: '홍길동', role: '팀장', initial: '나' }],
+                  members: [],
                   maxMembers: size === '2v2' ? 2 : 3,
                   applied: false,
                 });

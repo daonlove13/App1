@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { resetAll } from '../services/api';
 
-export type AppScreenKey = 'splash' | 'onboarding' | 'login' | 'profileSetup' | 'studentIdUpload' | 'approvalComplete' | 'app';
+export type AppScreenKey = 'loading' | 'splash' | 'onboarding' | 'login' | 'profileSetup' | 'studentIdUpload' | 'studentIdPending' | 'approvalComplete' | 'app';
 export type TabKey = 'home' | 'matching' | 'chat' | 'my';
 export type SubPageKey =
   | 'matchSuccess'
@@ -35,7 +35,8 @@ const SCREENS: { key: AppScreenKey; label: string }[] = [
   { key: 'onboarding', label: '온보딩' },
   { key: 'login', label: '로그인' },
   { key: 'profileSetup', label: '개인정보' },
-  { key: 'studentIdUpload', label: '학생증' },
+  { key: 'studentIdUpload', label: '학생증업로드' },
+  { key: 'studentIdPending', label: '학생증대기' },
   { key: 'approvalComplete', label: '승인완료' },
   { key: 'app', label: '앱(홈)' },
 ];

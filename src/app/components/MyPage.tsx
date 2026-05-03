@@ -46,30 +46,26 @@ export default function MyPage({ onTabChange, onOpenHistory }: Props) {
 
         {/* 프로필 */}
         {profileLoading ? (
-          <div className="px-4 pt-4 pb-4">
-            <Skeleton className="h-[120px] rounded-[20px]" />
+          <div className="px-4 pt-[18px] pb-[18px] border-b border-[#f3f4f6] flex items-center gap-[14px]">
+            <Skeleton className="w-[52px] h-[52px] rounded-full" />
+            <div className="flex flex-col gap-2 flex-1">
+              <Skeleton className="h-[20px] w-[80px]" />
+              <Skeleton className="h-[16px] w-[140px]" />
+            </div>
           </div>
         ) : (
-          <div className="px-4 pt-4 pb-2">
-            <div className="bg-black rounded-[20px] px-5 py-5">
-              <div className="flex items-center gap-4">
-                <div className="w-[52px] h-[52px] rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                  <span className="text-white text-[20px] font-semibold">{initial}</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-[18px] text-white leading-[26px]">{profile?.name}</p>
-                  <p className="text-[12px] text-white/50 mt-[2px]">
-                    {profile?.university} · {profile?.department}
-                  </p>
-                  <p className="text-[11px] text-white/40">{profile?.grade}</p>
-                </div>
-              </div>
+          <div className="px-4 pt-[18px] pb-[18px] border-b border-[#f3f4f6] flex items-center gap-[14px]">
+            <div className="w-[52px] h-[52px] rounded-full bg-black flex items-center justify-center shrink-0">
+              <span className="text-white text-[20px] font-semibold">{initial}</span>
+            </div>
+            <div className="flex flex-col gap-[4px]">
+              <p className="font-bold text-[17px] text-[#0a0a0a] leading-[25px]">{profile?.name}</p>
+              <p className="text-[12px] text-[#6a7282]">
+                {profile?.university} · {profile?.department} · {profile?.grade}
+              </p>
               {profile?.verified && (
-                <div className="mt-4 flex items-center gap-2">
-                  <div className="w-[16px] h-[16px] rounded-full bg-white/10 flex items-center justify-center">
-                    <span className="text-[9px] text-white">✓</span>
-                  </div>
-                  <span className="text-[11px] text-white/50">학교 인증 완료</span>
+                <div className="mt-[2px] bg-[#f3f4f6] border border-[#d1d5dc] rounded-full px-[8px] py-[2px] inline-flex w-fit">
+                  <span className="text-[11px] text-[#0a0a0a]">학교 인증 완료 ✓</span>
                 </div>
               )}
             </div>
@@ -77,14 +73,11 @@ export default function MyPage({ onTabChange, onOpenHistory }: Props) {
         )}
 
         {/* 과팅 이력 */}
-        <div className="px-4 pt-[16px] pb-[6px] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-[3px] h-[14px] bg-black rounded-full" />
-            <p className="text-[13px] font-semibold text-[#0a0a0a]">과팅 이력</p>
-          </div>
+        <div className="px-4 pt-[14px] pb-[6px] flex items-center justify-between">
+          <p className="text-[11px] text-[#6a7282]">과팅 이력</p>
           <button
             onClick={onOpenHistory}
-            className="text-[11px] text-[#9ca3af] font-medium flex items-center gap-0.5"
+            className="text-[11px] text-black font-medium flex items-center gap-0.5 underline"
           >
             전체보기 →
           </button>
@@ -100,13 +93,13 @@ export default function MyPage({ onTabChange, onOpenHistory }: Props) {
             <div className="text-center py-6 text-[13px] text-[#99a1af]">아직 과팅 이력이 없어요</div>
           ) : (
             recentHistory.map(item => (
-              <div key={item.id} className="bg-[#f7f7f7] rounded-[14px] px-[15px] py-[13px] flex items-center justify-between">
+              <div key={item.id} className="border border-[#e5e7eb] rounded-[14px] px-[15px] py-[13px] flex items-center justify-between">
                 <div className="flex flex-col gap-[2px]">
                   <p className="text-[13px] font-medium text-[#0a0a0a] leading-[19.5px]">{item.name}</p>
-                  <p className="text-[11px] text-[#9ca3af]">{item.date} · {item.place}</p>
+                  <p className="text-[11px] text-[#6a7282]">{item.date} · {item.place}</p>
                 </div>
-                <div className="bg-black rounded-full px-[10px] py-[3px]">
-                  <span className="text-[10px] text-white font-medium">완료</span>
+                <div className="bg-[#f3f4f6] border border-[#d1d5dc] rounded-full px-[10px] py-[2px]">
+                  <span className="text-[11px] text-[#0a0a0a]">완료</span>
                 </div>
               </div>
             ))
@@ -114,26 +107,25 @@ export default function MyPage({ onTabChange, onOpenHistory }: Props) {
         </div>
 
         {/* 패널티 현황 */}
-        <div className="px-4 pt-[12px] pb-[12px] mx-4 bg-[#f7f7f7] rounded-[14px] mb-4">
-          <div className="flex items-center justify-between mb-[10px]">
-            <p className="text-[12px] font-semibold text-[#0a0a0a]">패널티 현황</p>
-            <p className="text-[11px] text-[#9ca3af]">3회 누적 시 1주일 정지</p>
-          </div>
-          <div className="flex items-center gap-[6px]">
+        <div className="px-4 pt-[8px] border-t border-[#f3f4f6]">
+          <p className="text-[11px] text-[#6a7282] mb-[10px]">패널티 현황</p>
+          <div className="flex items-center gap-[8px]">
             {[0, 1, 2].map(i => (
               <div
                 key={i}
-                className={`flex-1 h-[6px] rounded-full transition-colors ${
+                className={`w-[14px] h-[14px] rounded-full ${
                   i < (profile?.penalties ?? 0) ? 'bg-black' : 'bg-[#e5e7eb]'
                 }`}
               />
             ))}
+            <p className="text-[11px] text-[#6a7282]">
+              {profile?.penalties ?? 0} / 3 · 3회 누적 시 1주일 이용 정지
+            </p>
           </div>
-          <p className="text-[11px] text-[#9ca3af] mt-[8px]">{profile?.penalties ?? 0} / 3</p>
         </div>
 
         {/* 설정 메뉴 */}
-        <div className="px-4 border-t border-[#f3f4f6] pt-[4px]">
+        <div className="px-4 mt-[16px] border-t border-[#e5e7eb] pt-[4px]">
           {menuItems.map((item, idx) => (
             <button
               key={idx}

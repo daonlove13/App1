@@ -61,9 +61,8 @@ export default function ChatPage({ onTabChange, onOpenRoom, onOpenNotifications,
       <div className="absolute top-[100px] left-0 right-0 bottom-[90px] overflow-y-auto">
 
         {/* 진행 중인 과팅 */}
-        <div className="px-4 pt-[14px] pb-[6px] flex items-center gap-2">
-          <div className="w-[3px] h-[13px] bg-black rounded-full" />
-          <p className="text-[12px] font-semibold text-[#0a0a0a]">진행 중인 과팅</p>
+        <div className="px-4 pt-[14px] pb-[6px]">
+          <p className="text-[11px] text-[#6a7282]">진행 중인 과팅</p>
         </div>
 
         {/* 데모 + API 진행 중 채팅 */}

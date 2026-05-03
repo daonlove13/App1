@@ -156,19 +156,7 @@ function HasTeamStatusCard({
   );
 }
 
-// ─── 식당 이미지 맵 ──────────────────────────────────────────────────────────
-const RESTAURANT_IMAGES = [
-  'https://images.unsplash.com/photo-1758945185175-3d54780cd8d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-  'https://images.unsplash.com/photo-1637471753995-259e42e029f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-  'https://images.unsplash.com/photo-1771695092168-9730f1ebcc73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-  'https://images.unsplash.com/photo-1709433420612-8cad609df914?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-  'https://images.unsplash.com/photo-1681270507609-e2a5f21969b0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-  'https://images.unsplash.com/photo-1594998893017-36147cbcae05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-  'https://images.unsplash.com/photo-1706295331319-8ec5da63cb91?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-  'https://images.unsplash.com/photo-1771142673147-c1ea0ab2f497?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-];
-
-// ─── 통계 섹션 ─── (블랙 카드)
+// ─── 통계 섹션 ────────────────────────────────────────────────────────────────
 function StatsSection({ hasTeam, todayApplications, maleWaiting, femaleWaiting, todayMatches, loading }: {
   hasTeam: boolean;
   todayApplications: number;
@@ -190,36 +178,32 @@ function StatsSection({ hasTeam, todayApplications, maleWaiting, femaleWaiting, 
       ];
 
   return (
-    <div className="bg-black rounded-[20px] px-5 py-5 mb-6">
-      <p className="text-white/40 text-[10px] font-medium uppercase tracking-widest mb-4">실시간 현황</p>
-      <div className="grid grid-cols-3">
-        {stats.map((stat, idx) => (
-          <div key={idx} className={`text-center ${idx < 2 ? 'border-r border-white/10' : ''}`}>
-            <div className={`text-[32px] font-bold text-white leading-[38px] ${loading ? 'opacity-30' : ''}`}>
-              {stat.value}
-            </div>
-            <div className="text-[11px] text-white/40 mt-[4px]">{stat.label}</div>
+    <div className="grid grid-cols-3 mb-6">
+      {stats.map((stat, idx) => (
+        <div key={idx} className="text-center">
+          <div className={`text-[30px] font-bold text-black leading-[36px] ${loading ? 'opacity-30' : ''}`}>
+            {stat.value}
           </div>
-        ))}
-      </div>
+          <div className="text-[12px] text-[#6a7282] mt-1">{stat.label}</div>
+        </div>
+      ))}
     </div>
   );
 }
 
 // ─── 식당 카드 ────────────────────────────────────────────────────────────────
-function RestaurantListItem({ item, index, onClick }: { item: Restaurant; index: number; onClick: () => void }) {
-  const imgUrl = RESTAURANT_IMAGES[index % RESTAURANT_IMAGES.length];
+function RestaurantListItem({ item, onClick }: { item: Restaurant; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="bg-white rounded-[16px] overflow-hidden text-left active:opacity-80"
+      className="bg-white rounded-[16px] overflow-hidden shadow-[0px_1px_3px_0px_rgba(0,0,0,0.08)] border border-[#f3f4f6] text-left active:bg-[#fafafa]"
     >
-      <div className="h-[108px] overflow-hidden">
-        <img src={imgUrl} alt={item.name} className="w-full h-full object-cover" />
+      <div className="h-[100px] bg-[#f3f4f6] flex items-center justify-center">
+        <span className="text-[#d1d5dc] text-[11px]">사진 준비 중</span>
       </div>
       <div className="pt-2.5 px-3 pb-3">
-        <h3 className="font-bold text-[13px] text-[#0a0a0a] mb-[2px] leading-[18px]">{item.name}</h3>
-        <p className="text-[11px] text-[#9ca3af]">{item.location} · {item.district}</p>
+        <h3 className="font-bold text-[13px] text-[#0a0a0a] mb-0.5 leading-[18px]">{item.name}</h3>
+        <p className="text-[11px] text-[#6a7282]">{item.location} · {item.district}</p>
       </div>
     </button>
   );
@@ -316,11 +300,9 @@ export default function MainHome({
 
         {/* 근처 갈만한 식당 */}
         <div className="mb-4">
-          <div className="mb-3 flex items-center gap-2">
-            <div className="w-[3px] h-[18px] bg-black rounded-full" />
-            <div>
-              <h2 className="font-bold text-[17px] text-[#0a0a0a]">근처 갈만한 식당</h2>
-            </div>
+          <div className="mb-3">
+            <h2 className="font-bold text-[18px] text-[#0a0a0a]">근처 갈만한 식당</h2>
+            <p className="text-[12px] text-[#6a7282] mt-0.5">매칭되면 가기 좋은 학교 근처 가게들이에요</p>
           </div>
           {restLoading ? (
             <div className="grid grid-cols-2 gap-3">
@@ -328,8 +310,8 @@ export default function MainHome({
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
-              {restaurants.map((item, idx) => (
-                <RestaurantListItem key={item.id} item={item} index={idx} onClick={() => onOpenRestaurant?.(item)} />
+              {restaurants.map((item) => (
+                <RestaurantListItem key={item.id} item={item} onClick={() => onOpenRestaurant?.(item)} />
               ))}
               {restaurants.length === 0 && (
                 <div className="col-span-2 text-center py-8 text-[13px] text-[#99a1af]">

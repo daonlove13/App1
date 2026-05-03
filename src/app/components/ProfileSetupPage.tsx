@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronDown, Loader2 } from 'lucide-react';
+import { createUserProfile } from '../services/api';
 
 const DEPARTMENTS = [
   '경영학과', '경제학과', '회계학과', '무역학과', '마케팅학과', '금융학과',
@@ -33,6 +34,8 @@ export default function ProfileSetupPage({ onBack, onDone }: Props) {
   const [studentId, setStudentId] = useState('');
   const [gender, setGender] = useState<'남' | '여' | ''>('');
   const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const isNameValid = name.trim().length >= 2;
   const isDeptValid = department !== '';
@@ -41,6 +44,26 @@ export default function ProfileSetupPage({ onBack, onDone }: Props) {
   const isPhoneValid = phone.replace(/\D/g, '').length === 11;
 
   const isAllValid = isNameValid && isDeptValid && isStudentIdValid && isGenderValid && isPhoneValid;
+
+  const handleDone = async () => {
+    if (!isAllValid) return;
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      await createUserProfile({
+        name: name.trim(),
+        department,
+        gender: gender === '남' ? '남성' : '여성',
+        studentId,
+        phone,
+      });
+      onDone();
+    } catch (e) {
+      setErrorMsg(String(e));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
@@ -204,19 +227,26 @@ export default function ProfileSetupPage({ onBack, onDone }: Props) {
             · 전화번호는 고객 지원 목적으로만 사용돼요.
           </p>
         </div>
+
+        {errorMsg && (
+          <div className="bg-red-50 border border-red-200 rounded-[12px] px-4 py-3 mb-4">
+            <p className="text-[12px] text-red-600 leading-[18px]">{errorMsg}</p>
+          </div>
+        )}
       </div>
 
       {/* CTA */}
       <div className="absolute bottom-[58px] left-[30px] right-[30px]">
         <button
-          onClick={() => isAllValid && onDone()}
-          disabled={!isAllValid}
-          className={`w-full rounded-[14px] py-[15px] text-[15px] font-semibold transition-colors ${
-            isAllValid
+          onClick={handleDone}
+          disabled={!isAllValid || loading}
+          className={`w-full rounded-[14px] py-[15px] text-[15px] font-semibold transition-colors flex items-center justify-center gap-2 ${
+            isAllValid && !loading
               ? 'bg-black text-white'
               : 'bg-[#e5e7eb] text-[#99a1af]'
           }`}
         >
+          {loading && <Loader2 size={16} className="animate-spin" />}
           다음 · 학생증 인증
         </button>
       </div>

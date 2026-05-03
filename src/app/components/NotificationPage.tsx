@@ -1,6 +1,7 @@
 import { ChevronLeft, Heart, Users, MessageCircle, Bell } from 'lucide-react';
 import { useNotifications } from '../hooks/useData';
 import type { Notification } from '../services/api';
+import StatusBar from '../../imports/StatusBar/StatusBar';
 
 type NotiType = Notification['type'];
 
@@ -32,7 +33,9 @@ export default function NotificationPage({
 
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] bg-white" />
+      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
+        <StatusBar />
+      </div>
       <div className="absolute top-[44px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center justify-between border-b border-[#f3f4f6]">
         <div className="flex items-center gap-2">
           <button onClick={onBack} className="p-1"><ChevronLeft size={24} /></button>

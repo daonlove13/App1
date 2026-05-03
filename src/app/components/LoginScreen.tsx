@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { ChevronLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
-import svgPaths from '../../imports/svg-ll91t992hz';
 import { authSignUp, authSignIn } from '../services/api';
 import { supabase } from '../services/supabaseClient';
+import StatusBar from '../../imports/StatusBar/StatusBar';
 
 type LoginStep = 'landing' | 'signupEmail' | 'signupPassword' | 'login';
 
@@ -31,15 +31,8 @@ function LandingView({
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
       {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] bg-white">
-        <div className="absolute h-[34px] left-1/2 -translate-x-1/2 top-0 w-[207.16px]">
-          <svg className="block size-full" fill="none" viewBox="0 0 173.16 34" preserveAspectRatio="none">
-            <path d={svgPaths.p10628500} fill="black" />
-          </svg>
-        </div>
-        <p className="absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-normal left-[52px] text-[16px] text-black top-[15px] tracking-[0.5px] whitespace-nowrap">
-          3:14
-        </p>
+      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
+        <StatusBar />
       </div>
 
       {/* 로고 */}
@@ -99,10 +92,8 @@ function SignupEmailView({
 
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      <div className="absolute h-[44px] top-0 left-0 w-[390px] bg-white">
-        <p className="absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-normal left-[20px] text-[16px] text-black top-[15px] tracking-[0.5px] whitespace-nowrap">
-          3:14
-        </p>
+      <div className="absolute h-[44px] top-0 left-0 w-[390px] overflow-clip">
+        <StatusBar />
       </div>
 
       <div className="absolute top-[44px] left-0 right-0 h-[56px] flex items-center px-4">
@@ -213,10 +204,8 @@ function SignupPasswordView({
 
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      <div className="absolute h-[44px] top-0 left-0 w-[390px] bg-white">
-        <p className="absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-normal left-[20px] text-[16px] text-black top-[15px] tracking-[0.5px] whitespace-nowrap">
-          3:14
-        </p>
+      <div className="absolute h-[44px] top-0 left-0 w-[390px] overflow-clip">
+        <StatusBar />
       </div>
 
       <div className="absolute top-[44px] left-0 right-0 h-[56px] flex items-center px-4">
@@ -358,10 +347,8 @@ function LoginView({
 
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      <div className="absolute h-[44px] top-0 left-0 w-[390px] bg-white">
-        <p className="absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-normal left-[20px] text-[16px] text-black top-[15px] tracking-[0.5px] whitespace-nowrap">
-          3:14
-        </p>
+      <div className="absolute h-[44px] top-0 left-0 w-[390px] overflow-clip">
+        <StatusBar />
       </div>
 
       <div className="absolute top-[44px] left-0 right-0 h-[56px] flex items-center px-4 border-b border-[#f3f4f6]">

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronDown, Loader2 } from 'lucide-react';
 import { createUserProfile } from '../services/api';
+import StatusBar from '../../imports/StatusBar/StatusBar';
 
 const DEPARTMENTS = [
   '경영학과', '경제학과', '회계학과', '무역학과', '마케팅학과', '금융학과',
@@ -68,10 +69,8 @@ export default function ProfileSetupPage({ onBack, onDone }: Props) {
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
       {/* Status bar */}
-      <div className="absolute h-[44px] top-0 left-0 w-[390px] bg-white">
-        <p className="absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-normal left-[20px] text-[16px] text-black top-[15px] tracking-[0.5px] whitespace-nowrap">
-          3:14
-        </p>
+      <div className="absolute h-[44px] top-0 left-0 w-[390px] overflow-clip">
+        <StatusBar />
       </div>
 
       {/* Back button */}

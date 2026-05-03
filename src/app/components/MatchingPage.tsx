@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Bell, X, UserPlus } from 'lucide-react';
+import { Bell, ChevronRight, Users } from 'lucide-react';
+import StatusBar from '../../imports/StatusBar/StatusBar';
 import BottomNav from './BottomNav';
 import type { Team, TeamMember } from '../services/api';
 
@@ -69,8 +70,8 @@ export default function MatchingPage({ team, onTabChange, onOpenNotifications, o
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]" data-name="MatchingPage">
 
       {/* ── Status bar ── */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] bg-white">
-        <p className="absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-normal left-[20px] text-[16px] text-black top-[15px] tracking-[0.5px] whitespace-nowrap">3:14</p>
+      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
+        <StatusBar />
       </div>
 
       {/* ── Header ── */}

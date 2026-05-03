@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Camera, CheckCircle, Upload, ChevronLeft, Loader2, AlertCircle } from 'lucide-react';
 import { uploadStudentCard } from '../services/api';
+import StatusBar from '../../imports/StatusBar/StatusBar';
 
 /* ── 제휴 가게 미리보기 데이터 ─────────────────────────────────── */
 const PREVIEW_RESTAURANTS = [
@@ -134,10 +135,8 @@ export default function StudentIdUploadPage({ onDone, onBack, defaultState = 'id
       />
 
       {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] bg-white">
-        <p className="absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-normal left-[20px] text-[16px] text-black top-[15px] tracking-[0.5px] whitespace-nowrap">
-          3:14
-        </p>
+      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
+        <StatusBar />
       </div>
 
       {/* Header */}

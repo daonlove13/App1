@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, X, MapPin, Clock, Check, Users, CalendarCheck, Trash2, Plus, BookOpen, HelpCircle, Store, ChevronDown, ChevronUp } from 'lucide-react';
 import type { ChatItem } from './ChatPage';
 import { useMessages } from '../hooks/useData';
+import StatusBar from '../../imports/StatusBar/StatusBar';
 
 interface Props {
   chat: ChatItem;
@@ -149,8 +150,8 @@ export default function ChatRoomPage({ chat, onBack, onComplete }: Props) {
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
 
       {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] bg-white">
-        <p className="absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-normal left-[20px] text-[16px] text-black top-[15px] tracking-[0.5px] whitespace-nowrap">3:14</p>
+      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
+        <StatusBar />
       </div>
 
       {/* Header */}

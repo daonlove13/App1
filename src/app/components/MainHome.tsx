@@ -1,4 +1,5 @@
-import { Bell, ChevronRight, Users, UserPlus } from 'lucide-react';
+import { Bell, Users, ChevronRight, MapPin } from 'lucide-react';
+import StatusBar from '../../imports/StatusBar/StatusBar';
 import BottomNav from './BottomNav';
 import { useProfile } from '../hooks/useData';
 import { useStats } from '../hooks/useData';
@@ -253,9 +254,8 @@ export default function MainHome({
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]" data-name="MainHome">
 
       {/* ── Status bar ── */}
-      <div className="absolute h-[44px] left-0 overflow-clip top-0 w-[390px]">
-        <div className="absolute bg-white h-[44px] left-0 top-0 w-[390px]" />
-        <p className="absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-[normal] left-[20px] not-italic text-[16px] text-black top-[15px] tracking-[0.5px] whitespace-nowrap">3:14</p>
+      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
+        <StatusBar />
       </div>
 
       {/* ── Header ── */}

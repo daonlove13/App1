@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
+import StatusBar from '../../imports/StatusBar/StatusBar';
 
 interface BrowseTeam {
   id: number;
@@ -48,8 +49,8 @@ export default function BrowseTeamsPage({ onBack, onApply }: Props) {
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
 
       {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] bg-white">
-        <p className="absolute font-['SF_Compact_Display:Semibold',sans-serif] leading-normal left-[20px] text-[16px] text-black top-[15px] tracking-[0.5px] whitespace-nowrap">3:14</p>
+      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
+        <StatusBar />
       </div>
 
       {/* Header */}

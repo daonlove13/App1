@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
+import StatusBar from '../../imports/StatusBar/StatusBar';
 
 interface Slide {
   emoji: string;
@@ -35,7 +36,9 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
       {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] bg-white" />
+      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
+        <StatusBar />
+      </div>
 
       {/* Skip */}
       <div className="absolute top-[44px] right-4 h-[56px] flex items-center">

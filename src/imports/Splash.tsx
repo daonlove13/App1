@@ -31,7 +31,7 @@ function Container() {
 
 function Group() {
   return (
-    <div className="absolute contents font-['Protest_Riot:Regular',sans-serif] leading-[normal] left-[102.28px] not-italic text-white top-[206px]">
+    <div className="absolute contents leading-[normal] left-[102.28px] not-italic text-white top-[206px]" style={{ fontFamily: "'Protest Riot', sans-serif" }}>
       <p className="absolute left-[165.96px] text-[148.078px] top-[206px] whitespace-nowrap">?</p>
       <p className="absolute h-[79.962px] left-[102.28px] text-[66.635px] top-[360.74px] w-[188.8px]">indeed</p>
     </div>

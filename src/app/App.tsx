@@ -146,7 +146,7 @@ export default function App() {
     setAppScreen('splash');
   };
 
-  const devBar = import.meta.env.DEV ? (
+  const devBar = (
     <DevBar
       appScreen={appScreen}
       activeTab={activeTab}
@@ -182,7 +182,7 @@ export default function App() {
       onReset={reset}
       onShowFlow={() => setShowFlow(true)}
     />
-  ) : null;
+  );
 
   /* ── 플로우 뷰 ──────────────────────────────────── */
   if (showFlow) {

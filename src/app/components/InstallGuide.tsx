@@ -67,10 +67,7 @@ export default function InstallGuide({ onSkip }: Props) {
     <div className="size-full flex flex-col bg-black text-white">
       {/* 헤더 */}
       <div className="flex flex-col items-center pt-16 pb-8 px-6">
-        <div className="w-20 h-20 rounded-2xl bg-black border border-white/20 flex items-center justify-center mb-4">
-          <span className="text-white font-bold text-sm tracking-widest">INDEED</span>
-        </div>
-        <p className="font-['Protest_Riot'] text-[36px]">INDEED</p>
+        <p className="font-['Protest_Riot'] text-white text-[64px] leading-none">indeed</p>
         <p className="text-gray-400 text-sm mt-1">충북대 학과별 과팅 매칭</p>
       </div>
 

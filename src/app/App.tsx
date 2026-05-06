@@ -62,12 +62,10 @@ export default function App() {
   const [openChat, setOpenChat] = useState<ChatItem | null>(null);
   const [openRestaurant, setOpenRestaurant] = useState<Restaurant | null>(null);
 
-  // PWA 설치 가이드 — 최초 1회만 보여주기
+  // PWA 설치 가이드 — 브라우저 접속 시 항상 표시, 앱(standalone)으로 실행 시 스킵
   const [showInstallGuide, setShowInstallGuide] = useState(() => {
-    // standalone(앱처럼 실행 중)이면 가이드 스킵
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    const alreadySeen = localStorage.getItem('pwa-guide-seen') === 'true';
-    return !isStandalone && !alreadySeen;
+    return !isStandalone;
   });
 
   // ── 실제 팀 데이터 (Supabase) ──────────────────────────────────
@@ -214,8 +212,7 @@ export default function App() {
       <div className="size-full">
         <InstallGuide
           onSkip={() => {
-            localStorage.setItem('pwa-guide-seen', 'true');
-            setShowInstallGuide(false);
+              setShowInstallGuide(false);
           }}
         />
       </div>

@@ -1,7 +1,7 @@
 {
-  "name": "과연 / indeed",
-  "short_name": "과연",
-  "description": "충북대 학과별 과팅 매칭 플랫폼",
+  "name": "INDEED",
+  "short_name": "INDEED",
+  "description": "충북대 학과별 과팅 매칭",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",

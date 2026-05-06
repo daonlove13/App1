@@ -1,9 +1,6 @@
 import { useState } from 'react';
-import { ChevronLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { authSignUp, authSignIn } from '../services/api';
+import { Loader2 } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';
-
-type LoginStep = 'landing' | 'signupEmail' | 'signupPassword' | 'login';
 
 interface Props {
   onSignup: () => void;
@@ -18,25 +15,117 @@ function ErrorBox({ msg }: { msg: string }) {
   );
 }
 
-/* ── 랜딩 ── */
-function LandingView({ onEmailSignup, onLogin }: { onEmailSignup: () => void; onLogin: () => void }) {
+/* ── 카카오 아이콘 ── */
+function KakaoIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M10 2C5.582 2 2 4.925 2 8.5c0 2.26 1.418 4.25 3.563 5.438L4.75 17l3.938-2.563C9.115 14.813 9.553 14.875 10 14.875c4.418 0 8-2.925 8-6.375C18 4.925 14.418 2 10 2z" fill="#3C1E1E"/>
+    </svg>
+  );
+}
+
+/* ── 구글 아이콘 ── */
+function GoogleIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M19.6 10.227c0-.709-.064-1.39-.182-2.045H10v3.868h5.382a4.6 4.6 0 01-1.996 3.018v2.51h3.232c1.891-1.742 2.982-4.305 2.982-7.35z" fill="#4285F4"/>
+      <path d="M10 20c2.7 0 4.964-.895 6.618-2.423l-3.232-2.509c-.895.6-2.04.955-3.386.955-2.605 0-4.81-1.759-5.595-4.123H1.064v2.59A9.996 9.996 0 0010 20z" fill="#34A853"/>
+      <path d="M4.405 11.9A6.01 6.01 0 014.09 10c0-.663.114-1.305.314-1.9V5.51H1.064A9.996 9.996 0 000 10c0 1.614.386 3.14 1.064 4.49l3.34-2.59z" fill="#FBBC05"/>
+      <path d="M10 3.977c1.468 0 2.786.505 3.823 1.496l2.868-2.868C14.959.99 12.695 0 10 0 6.09 0 2.71 2.24 1.064 5.51l3.34 2.59C5.192 5.736 7.396 3.977 10 3.977z" fill="#EA4335"/>
+    </svg>
+  );
+}
+
+export default function LoginScreen({ onSignup, onLogin }: Props) {
+  const [loading, setLoading] = useState<'google' | 'kakao' | null>(null);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleGoogle = async () => {
+    setLoading('google');
+    setErrorMsg('');
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+      if (error) throw error;
+    } catch (e) {
+      setErrorMsg('구글 로그인에 실패했어요. 다시 시도해주세요.');
+      setLoading(null);
+    }
+  };
+
+  const handleKakao = async () => {
+    setLoading('kakao');
+    setErrorMsg('');
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'kakao',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+      if (error) throw error;
+    } catch (e) {
+      setErrorMsg('카카오 로그인에 실패했어요. 다시 시도해주세요.');
+      setLoading(null);
+    }
+  };
+
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      <div className="absolute left-0 right-0 top-[270px] flex flex-col items-center">
+      {/* 로고 */}
+      <div className="absolute left-0 right-0 top-[200px] flex flex-col items-center">
         <p className="font-['Protest_Riot'] text-[96px] leading-none text-black">indeed</p>
       </div>
-      <div className="absolute left-0 right-0 top-[478px] text-center">
+
+      {/* 슬로건 */}
+      <div className="absolute left-0 right-0 top-[390px] text-center">
         <p className="text-[14px] text-[#6a7282] leading-[22px]">같은 학교, 다른 학과</p>
         <p className="text-[14px] text-[#6a7282]">과팅의 새로운 방법</p>
       </div>
-      <div className="absolute left-[35px] right-[35px] top-[568px] flex flex-col gap-[10px]">
-        <button onClick={onEmailSignup} className="bg-black h-[56px] rounded-[15px] flex items-center justify-center">
-          <span className="text-white text-[17px] font-semibold">이메일로 시작하기</span>
+
+      {/* 소셜 로그인 버튼 */}
+      <div className="absolute left-[35px] right-[35px] top-[490px] flex flex-col gap-[12px]">
+        {/* 카카오 */}
+        <button
+          onClick={handleKakao}
+          disabled={!!loading}
+          className="h-[56px] rounded-[15px] flex items-center justify-center gap-[10px] transition-opacity disabled:opacity-60"
+          style={{ backgroundColor: '#FEE500' }}
+        >
+          {loading === 'kakao' ? (
+            <Loader2 size={20} className="animate-spin text-[#3C1E1E]" />
+          ) : (
+            <KakaoIcon />
+          )}
+          <span className="text-[#3C1E1E] text-[17px] font-semibold">카카오로 시작하기</span>
         </button>
-        <button onClick={onLogin} className="bg-white h-[56px] rounded-[15px] border border-[#e5e7eb] flex items-center justify-center">
-          <span className="text-[#1e2939] text-[17px] font-medium">로그인</span>
+
+        {/* 구글 */}
+        <button
+          onClick={handleGoogle}
+          disabled={!!loading}
+          className="bg-white h-[56px] rounded-[15px] border border-[#e5e7eb] flex items-center justify-center gap-[10px] transition-opacity disabled:opacity-60"
+        >
+          {loading === 'google' ? (
+            <Loader2 size={20} className="animate-spin text-[#6a7282]" />
+          ) : (
+            <GoogleIcon />
+          )}
+          <span className="text-[#1e2939] text-[17px] font-medium">Google로 시작하기</span>
         </button>
       </div>
+
+      {errorMsg && (
+        <div className="absolute left-[35px] right-[35px] top-[620px]">
+          <ErrorBox msg={errorMsg} />
+        </div>
+      )}
+
+      {/* 약관 */}
       <div className="absolute left-0 right-0 bottom-[24px] text-center">
         <p className="text-[11px] text-[#99a1af] leading-[18px]">
           시작하면 <span className="text-black">이용약관</span> 및{' '}
@@ -46,205 +135,4 @@ function LandingView({ onEmailSignup, onLogin }: { onEmailSignup: () => void; on
       </div>
     </div>
   );
-}
-
-/* ── 회원가입 Step 1: 이메일 ── */
-function SignupEmailView({ onBack, onNext }: { onBack: () => void; onNext: (email: string) => void }) {
-  const [email, setEmail] = useState('');
-  const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  return (
-    <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      <div className="absolute top-[0px] left-0 right-0 h-[56px] flex items-center px-4">
-        <button onClick={onBack} className="flex items-center gap-1 text-[13px] text-[#6a7282]">
-          <ChevronLeft size={16} /> 뒤로
-        </button>
-      </div>
-      <div className="absolute top-[66px] left-0 right-0 px-[30px]">
-        <div className="flex gap-[6px] mb-[28px]">
-          {[1, 2].map(i => (
-            <div key={i} className={`h-[4px] flex-1 rounded-full ${i === 1 ? 'bg-black' : 'bg-[#e5e7eb]'}`} />
-          ))}
-        </div>
-        <p className="text-[12px] text-[#6a7282] mb-[4px]">STEP 1 · 이메일</p>
-        <h2 className="font-bold text-[22px] text-[#0a0a0a] mb-[6px]">이메일을<br />입력해주세요</h2>
-        <p className="text-[13px] text-[#6a7282] mb-[28px]">
-          로그인에 사용될 이메일을 입력해주세요. 재학 여부는 다음 단계에서 학생증으로 확인해요.
-        </p>
-        <div className={`border-2 rounded-[14px] px-[16px] py-[14px] transition-colors ${isValid ? 'border-black' : 'border-[#e5e7eb]'}`}>
-          <input
-            autoFocus type="email" value={email} onChange={e => setEmail(e.target.value)}
-            placeholder="예) hong@gmail.com"
-            className="w-full text-[15px] text-[#0a0a0a] placeholder-[#99a1af] outline-none bg-transparent"
-          />
-        </div>
-        {email.length > 0 && !isValid && (
-          <p className="text-[11px] text-[#e24b4a] mt-[8px]">올바른 이메일 형식을 입력해주세요</p>
-        )}
-        <div className="bg-[#f9fafb] rounded-[12px] p-[14px] mt-[20px]">
-          <p className="text-[12px] text-[#6a7282] leading-[19px]">
-            · 본인 명의의 이메일을 사용해주세요.<br />
-            · 이메일은 외부에 공개되지 않아요.
-          </p>
-        </div>
-      </div>
-      <div className="absolute bottom-[24px] left-[30px] right-[30px]">
-        <button
-          onClick={() => isValid && onNext(email)}
-          disabled={!isValid}
-          className={`w-full rounded-[14px] py-[15px] text-[15px] font-semibold transition-colors ${isValid ? 'bg-black text-white' : 'bg-[#e5e7eb] text-[#99a1af]'}`}
-        >
-          다음 단계
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ── 회원가입 Step 2: 비밀번호 ── */
-function SignupPasswordView({ email, onBack, onDone }: { email: string; onBack: () => void; onDone: () => void }) {
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [show, setShow] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-
-  const isPasswordValid = password.length >= 8;
-  const isConfirmValid = password === confirm && confirm.length > 0;
-  const isAllValid = isPasswordValid && isConfirmValid;
-
-  const handleSignup = async () => {
-    if (!isAllValid) return;
-    setLoading(true); setErrorMsg('');
-    try { await authSignUp(email, password); onDone(); }
-    catch (e) { setErrorMsg(String(e)); }
-    finally { setLoading(false); }
-  };
-
-  return (
-    <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      <div className="absolute top-[0px] left-0 right-0 h-[56px] flex items-center px-4">
-        <button onClick={onBack} className="flex items-center gap-1 text-[13px] text-[#6a7282]">
-          <ChevronLeft size={16} /> 뒤로
-        </button>
-      </div>
-      <div className="absolute top-[66px] left-0 right-0 px-[30px]">
-        <div className="flex gap-[6px] mb-[28px]">
-          {[1, 2].map(i => <div key={i} className="h-[4px] flex-1 rounded-full bg-black" />)}
-        </div>
-        <p className="text-[12px] text-[#6a7282] mb-[4px]">STEP 2 · 비밀번호</p>
-        <h2 className="font-bold text-[22px] text-[#0a0a0a] mb-[6px]">비밀번호를<br />설정해주세요</h2>
-        <p className="text-[13px] text-[#6a7282] mb-[28px]">
-          <span className="font-medium text-black">{email}</span><br />
-          8자 이상의 비밀번호를 입력해주세요.
-        </p>
-        <div className="flex flex-col gap-[12px]">
-          <div className={`border-2 rounded-[14px] px-[16px] py-[14px] flex items-center gap-2 transition-colors ${password.length > 0 && isPasswordValid ? 'border-black' : 'border-[#e5e7eb]'}`}>
-            <input
-              type={show ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
-              placeholder="비밀번호 (8자 이상)"
-              className="flex-1 text-[15px] text-[#0a0a0a] placeholder-[#99a1af] outline-none bg-transparent"
-            />
-            <button onClick={() => setShow(v => !v)} type="button">
-              {show ? <EyeOff size={18} className="text-[#99a1af]" /> : <Eye size={18} className="text-[#99a1af]" />}
-            </button>
-          </div>
-          {password.length > 0 && !isPasswordValid && (
-            <p className="text-[11px] text-[#e24b4a] -mt-2">8자 이상 입력해주세요</p>
-          )}
-          <div className={`border-2 rounded-[14px] px-[16px] py-[14px] transition-colors ${confirm.length > 0 && isConfirmValid ? 'border-black' : 'border-[#e5e7eb]'}`}>
-            <input
-              type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
-              placeholder="비밀번호 확인"
-              className="w-full text-[15px] text-[#0a0a0a] placeholder-[#99a1af] outline-none bg-transparent"
-            />
-          </div>
-          {confirm.length > 0 && !isConfirmValid && (
-            <p className="text-[11px] text-[#e24b4a] -mt-2">비밀번호가 일치하지 않아요</p>
-          )}
-        </div>
-        {errorMsg && <ErrorBox msg={errorMsg} />}
-      </div>
-      <div className="absolute bottom-[24px] left-[30px] right-[30px]">
-        <button
-          onClick={handleSignup} disabled={!isAllValid || loading}
-          className={`w-full rounded-[14px] py-[15px] text-[15px] font-semibold transition-colors flex items-center justify-center gap-2 ${isAllValid && !loading ? 'bg-black text-white' : 'bg-[#e5e7eb] text-[#99a1af]'}`}
-        >
-          {loading && <Loader2 size={16} className="animate-spin" />}
-          회원가입 완료
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ── 로그인 ── */
-function LoginView({ onBack, onDone }: { onBack: () => void; onDone: (verified: boolean, hasCard: boolean) => void }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [show, setShow] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-  const isValid = email.length > 0 && password.length > 0;
-
-  const handleLogin = async () => {
-    if (!isValid) return;
-    setLoading(true); setErrorMsg('');
-    try {
-      const { session } = await authSignIn(email, password);
-      if (!session) throw new Error('로그인에 실패했어요. 다시 시도해주세요.');
-      const { data: userData } = await supabase.from('users').select('verified, student_card_url').eq('id', session.user.id).maybeSingle();
-      onDone(userData?.verified ?? false, !!userData?.student_card_url);
-    } catch (e) { setErrorMsg(String(e)); }
-    finally { setLoading(false); }
-  };
-
-  return (
-    <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      <div className="absolute top-[0px] left-0 right-0 h-[56px] flex items-center px-4 border-b border-[#f3f4f6]">
-        <button onClick={onBack} className="flex items-center gap-1 text-[13px] text-[#6a7282]">
-          <ChevronLeft size={16} /> 뒤로
-        </button>
-        <p className="absolute left-1/2 -translate-x-1/2 font-bold text-[16px] text-[#0a0a0a]">로그인</p>
-      </div>
-      <div className="absolute top-[72px] left-0 right-0 px-[30px]">
-        <p className="font-bold text-[22px] text-[#0a0a0a] mb-[28px]">다시 만나서<br />반가워요 :)</p>
-        <div className="flex flex-col gap-[12px]">
-          <div className="border-2 border-[#e5e7eb] rounded-[14px] px-[16px] py-[14px] focus-within:border-black transition-colors">
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="이메일"
-              className="w-full text-[15px] text-[#0a0a0a] placeholder-[#99a1af] outline-none bg-transparent" />
-          </div>
-          <div className="border-2 border-[#e5e7eb] rounded-[14px] px-[16px] py-[14px] flex items-center gap-2 focus-within:border-black transition-colors">
-            <input type={show ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
-              placeholder="비밀번호" onKeyDown={e => e.key === 'Enter' && handleLogin()}
-              className="flex-1 text-[15px] text-[#0a0a0a] placeholder-[#99a1af] outline-none bg-transparent" />
-            <button onClick={() => setShow(v => !v)} type="button">
-              {show ? <EyeOff size={18} className="text-[#99a1af]" /> : <Eye size={18} className="text-[#99a1af]" />}
-            </button>
-          </div>
-        </div>
-        {errorMsg && <ErrorBox msg={errorMsg} />}
-      </div>
-      <div className="absolute bottom-[24px] left-[30px] right-[30px]">
-        <button onClick={handleLogin} disabled={!isValid || loading}
-          className={`w-full rounded-[14px] py-[15px] text-[15px] font-semibold transition-colors flex items-center justify-center gap-2 ${isValid && !loading ? 'bg-black text-white' : 'bg-[#e5e7eb] text-[#99a1af]'}`}
-        >
-          {loading && <Loader2 size={16} className="animate-spin" />}
-          로그인
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ── 메인 ── */
-export default function LoginScreen({ onSignup, onLogin }: Props) {
-  const [step, setStep] = useState<LoginStep>('landing');
-  const [signupEmail, setSignupEmail] = useState('');
-
-  if (step === 'signupEmail') return <SignupEmailView onBack={() => setStep('landing')} onNext={email => { setSignupEmail(email); setStep('signupPassword'); }} />;
-  if (step === 'signupPassword') return <SignupPasswordView email={signupEmail} onBack={() => setStep('signupEmail')} onDone={onSignup} />;
-  if (step === 'login') return <LoginView onBack={() => setStep('landing')} onDone={(v, h) => onLogin(v, h)} />;
-
-  return <LandingView onEmailSignup={() => setStep('signupEmail')} onLogin={() => setStep('login')} />;
 }

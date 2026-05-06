@@ -1,6 +1,5 @@
-import { ChevronLeft, Heart } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { useHistory, useProfile } from '../hooks/useData';
-import StatusBar from '../../imports/StatusBar/StatusBar';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 
@@ -21,13 +20,8 @@ export default function HistoryPage({ onBack, onTabChange }: Props) {
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
 
-      {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 border-b border-[#e5e7eb] h-[56px] flex items-center px-4">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 border-b border-[#e5e7eb] h-[56px] flex items-center px-4">
         <button onClick={onBack} className="flex items-center gap-1 text-[13px] text-[#6a7282]">
           <ChevronLeft size={16} />
           뒤로
@@ -36,7 +30,7 @@ export default function HistoryPage({ onBack, onTabChange }: Props) {
       </div>
 
       {/* Content */}
-      <div className="absolute top-[100px] left-0 right-0 bottom-[90px] overflow-y-auto px-4 pt-[18px]">
+      <div className="absolute top-[56px] left-0 right-0 bottom-[0px] overflow-y-auto px-4 pt-[18px]">
 
         {/* 통계 카드 */}
         <div className="grid grid-cols-3 gap-[10px] mb-[20px]">
@@ -62,7 +56,7 @@ export default function HistoryPage({ onBack, onTabChange }: Props) {
         ) : history.length === 0 ? (
           <div className="text-center py-12 text-[13px] text-[#99a1af]">아직 과팅 이력이 없어요</div>
         ) : (
-          <div className="flex flex-col gap-[10px] pb-4">
+          <div className="flex flex-col gap-[10px] pb-8">
             {history.map(item => (
               <div key={item.id} className="border border-[#e5e7eb] rounded-[14px] px-[16px] py-[14px]">
                 <div className="flex items-center justify-between mb-[8px]">
@@ -77,33 +71,6 @@ export default function HistoryPage({ onBack, onTabChange }: Props) {
             ))}
           </div>
         )}
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="absolute bottom-[34px] left-0 right-0 bg-white border-t border-[#f3f4f6] px-4 pt-[13px] h-[56px]">
-        <div className="flex items-center justify-around">
-          <button onClick={() => onTabChange('home')} className="flex flex-col items-center gap-1">
-            <div className="w-6 h-[4px] bg-[#d1d5dc] rounded-full" />
-            <span className="text-[12px] text-[#99a1af]">홈</span>
-          </button>
-          <button onClick={() => onTabChange('matching')} className="flex flex-col items-center gap-1">
-            <Heart size={22} className="text-[#99a1af]" />
-            <span className="text-[12px] text-[#99a1af]">매칭</span>
-          </button>
-          <button onClick={() => onTabChange('chat')} className="flex flex-col items-center gap-1">
-            <div className="w-6 h-6 border-2 border-[#d1d5dc] rounded-full" />
-            <span className="text-[12px] text-[#99a1af]">채팅</span>
-          </button>
-          <button onClick={() => onTabChange('my')} className="flex flex-col items-center gap-1">
-            <div className="w-6 h-[4px] bg-black rounded-full" />
-            <span className="text-[12px] font-medium text-black">MY</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Home Indicator */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px] bg-white">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-black rounded-full" />
       </div>
     </div>
   );

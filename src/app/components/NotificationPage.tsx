@@ -1,7 +1,6 @@
-import { ChevronLeft, Heart, Users, MessageCircle, Bell } from 'lucide-react';
+import { ChevronLeft, Heart, MessageCircle, Bell } from 'lucide-react';
 import { useNotifications } from '../hooks/useData';
 import type { Notification } from '../services/api';
-import StatusBar from '../../imports/StatusBar/StatusBar';
 
 type NotiType = Notification['type'];
 
@@ -33,23 +32,20 @@ export default function NotificationPage({
 
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center justify-between border-b border-[#f3f4f6]">
+
+      {/* Header */}
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center justify-between border-b border-[#f3f4f6]">
         <div className="flex items-center gap-2">
           <button onClick={onBack} className="p-1"><ChevronLeft size={24} /></button>
           <span className="font-bold text-[16px]">알림</span>
         </div>
-        <button
-          onClick={readAll}
-          className="text-[12px] text-[#6a7282] underline"
-        >
+        <button onClick={readAll} className="text-[12px] text-[#6a7282] underline">
           모두 읽음
         </button>
       </div>
 
-      <div className="absolute top-[110px] left-0 right-0 bottom-0 overflow-y-auto">
+      {/* Content */}
+      <div className="absolute top-[66px] left-0 right-0 bottom-0 overflow-y-auto">
         {loading ? (
           <div className="px-4 pt-4 flex flex-col gap-3">
             {[1, 2, 3].map(i => (
@@ -63,30 +59,34 @@ export default function NotificationPage({
             ))}
           </div>
         ) : notifications.length === 0 ? (
-          <div className="text-center py-12 text-[13px] text-[#99a1af]">알림이 없어요</div>
+          <div className="text-center py-16 text-[13px] text-[#99a1af]">알림이 없어요</div>
         ) : (
-          notifications.map((n) => {
-            const Icon = ICON[n.type] ?? Bell;
-            return (
-              <button
-                key={n.id}
-                onClick={() => handleClick(n)}
-                className={`w-full text-left flex items-start gap-3 px-4 py-4 border-b border-[#f3f4f6] active:bg-[#f3f4f6] ${!n.read ? 'bg-[#fafafa]' : 'bg-white'}`}
-              >
-                <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center shrink-0">
-                  <Icon size={18} className="text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-bold text-[14px]">{n.title}</span>
-                    {!n.read && <span className="w-1.5 h-1.5 rounded-full bg-black" />}
+          <div className="flex flex-col pb-8">
+            {notifications.map(n => {
+              const Icon = ICON[n.type] ?? Bell;
+              return (
+                <button
+                  key={n.id}
+                  onClick={() => handleClick(n)}
+                  className={`w-full px-4 py-[14px] flex items-start gap-3 border-b border-[#f9fafb] text-left ${
+                    n.read ? 'bg-white' : 'bg-[#f9fafb]'
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center shrink-0">
+                    <Icon size={18} className="text-white" />
                   </div>
-                  <p className="text-[13px] text-[#6a7282] leading-[18px]">{n.body}</p>
-                  <p className="text-[11px] text-[#9ca3af] mt-1">{n.time}</p>
-                </div>
-              </button>
-            );
-          })
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-[#0a0a0a] mb-0.5">{n.title}</p>
+                    <p className="text-[12px] text-[#6a7282] leading-[18px]">{n.body}</p>
+                    <p className="text-[11px] text-[#99a1af] mt-1">{n.createdAt}</p>
+                  </div>
+                  {!n.read && (
+                    <div className="w-2 h-2 rounded-full bg-black shrink-0 mt-1" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>

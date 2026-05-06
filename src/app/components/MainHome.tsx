@@ -1,6 +1,4 @@
-import { Bell, Users, ChevronRight, MapPin } from 'lucide-react';
-import StatusBar from '../../imports/StatusBar/StatusBar';
-import BottomNav from './BottomNav';
+import { UserPlus, ChevronRight, Bell, Users } from 'lucide-react';
 import { useProfile } from '../hooks/useData';
 import { useStats } from '../hooks/useData';
 import { useRestaurants } from '../hooks/useData';
@@ -253,13 +251,8 @@ export default function MainHome({
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]" data-name="MainHome">
 
-      {/* ── Status bar ── */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-
       {/* ── Header ── */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center justify-between border-b border-[#f3f4f6]">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center justify-between border-b border-[#f3f4f6]">
         <span className="font-['Protest_Riot'] text-[22px] leading-[28px]">indeed</span>
         <button className="p-2 relative" onClick={onOpenNotifications}>
           <Bell size={24} />
@@ -270,7 +263,7 @@ export default function MainHome({
       </div>
 
       {/* ── Main Content ── */}
-      <div className="absolute top-[110px] left-0 right-0 bottom-[90px] overflow-y-auto px-4 pt-4">
+      <div className="absolute top-[66px] left-0 right-0 bottom-[0px] overflow-y-auto px-4 pt-4">
 
         {/* D-N 카운트다운 배너 */}
         <OpenEventBanner />
@@ -322,8 +315,6 @@ export default function MainHome({
           )}
         </div>
       </div>
-
-      <BottomNav active="home" onTabChange={onTabChange} />
     </div>
   );
 }

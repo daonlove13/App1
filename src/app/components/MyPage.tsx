@@ -1,7 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import BottomNav from './BottomNav';
 import { useProfile, useHistory } from '../hooks/useData';
-import StatusBar from '../../imports/StatusBar/StatusBar';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 
@@ -32,18 +30,13 @@ export default function MyPage({ onTabChange, onOpenHistory }: Props) {
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
 
-      {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center justify-center">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center justify-center">
         <h1 className="font-bold text-[16px] text-[#0a0a0a]">마이페이지</h1>
       </div>
 
       {/* Content */}
-      <div className="absolute top-[100px] left-0 right-0 bottom-[90px] overflow-y-auto">
+      <div className="absolute top-[56px] left-0 right-0 bottom-[0px] overflow-y-auto">
 
         {/* 프로필 */}
         {profileLoading ? (
@@ -142,8 +135,6 @@ export default function MyPage({ onTabChange, onOpenHistory }: Props) {
           ))}
         </div>
       </div>
-
-      <BottomNav active="my" onTabChange={onTabChange} />
     </div>
   );
 }

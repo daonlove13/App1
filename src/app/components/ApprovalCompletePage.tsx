@@ -1,4 +1,4 @@
-import StatusBar from '../../imports/StatusBar/StatusBar';
+import { CheckCircle } from 'lucide-react';
 
 interface Props {
   onDone: () => void;
@@ -7,18 +7,14 @@ interface Props {
 export default function ApprovalCompletePage({ onDone }: Props) {
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      {/* Status bar */}
-      <div className="absolute h-[44px] top-0 left-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
 
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 h-[56px] flex items-center justify-center border-b border-[#f3f4f6]">
+      <div className="absolute top-[0px] left-0 right-0 h-[56px] flex items-center justify-center border-b border-[#f3f4f6]">
         <span className="font-['Protest_Riot'] text-[20px] text-black">indeed</span>
       </div>
 
       {/* Content */}
-      <div className="absolute top-[100px] left-0 right-0 bottom-[100px] flex flex-col items-center justify-center px-[30px] text-center">
+      <div className="absolute top-[56px] left-0 right-0 bottom-[100px] flex flex-col items-center justify-center px-[30px] text-center">
         {/* Icon */}
         <div className="w-[100px] h-[100px] bg-black rounded-full flex items-center justify-center mb-8">
           <CheckCircle size={52} className="text-white" strokeWidth={1.5} />
@@ -61,18 +57,13 @@ export default function ApprovalCompletePage({ onDone }: Props) {
       </div>
 
       {/* CTA */}
-      <div className="absolute bottom-[58px] left-[30px] right-[30px]">
+      <div className="absolute bottom-[24px] left-[30px] right-[30px]">
         <button
           onClick={onDone}
           className="w-full bg-black text-white rounded-[14px] py-[15px] text-[15px] font-semibold"
         >
           팀 만들러 가기
         </button>
-      </div>
-
-      {/* Home indicator */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px] bg-white">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-black rounded-full" />
       </div>
     </div>
   );

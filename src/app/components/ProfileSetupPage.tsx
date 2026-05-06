@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronDown, Loader2 } from 'lucide-react';
 import { createUserProfile } from '../services/api';
-import StatusBar from '../../imports/StatusBar/StatusBar';
 
 const DEPARTMENTS = [
   '경영학과', '경제학과', '회계학과', '무역학과', '마케팅학과', '금융학과',
@@ -68,13 +67,9 @@ export default function ProfileSetupPage({ onBack, onDone }: Props) {
 
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      {/* Status bar */}
-      <div className="absolute h-[44px] top-0 left-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
 
       {/* Back button */}
-      <div className="absolute top-[44px] left-0 right-0 h-[56px] flex items-center px-4">
+      <div className="absolute top-[0px] left-0 right-0 h-[56px] flex items-center px-4">
         <button
           onClick={onBack}
           className="flex items-center gap-1 text-[13px] text-[#6a7282]"
@@ -85,7 +80,7 @@ export default function ProfileSetupPage({ onBack, onDone }: Props) {
       </div>
 
       {/* Scrollable content */}
-      <div className="absolute top-[100px] left-0 right-0 bottom-[100px] overflow-y-auto px-[30px] pt-2">
+      <div className="absolute top-[56px] left-0 right-0 bottom-[100px] overflow-y-auto px-[30px] pt-2">
         {/* Step indicator */}
         <div className="flex gap-[6px] mb-[24px]">
           {[1, 2, 3].map(i => (
@@ -235,7 +230,7 @@ export default function ProfileSetupPage({ onBack, onDone }: Props) {
       </div>
 
       {/* CTA */}
-      <div className="absolute bottom-[58px] left-[30px] right-[30px]">
+      <div className="absolute bottom-[24px] left-[30px] right-[30px]">
         <button
           onClick={handleDone}
           disabled={!isAllValid || loading}
@@ -248,11 +243,6 @@ export default function ProfileSetupPage({ onBack, onDone }: Props) {
           {loading && <Loader2 size={16} className="animate-spin" />}
           다음 · 학생증 인증
         </button>
-      </div>
-
-      {/* Home indicator */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px] bg-white">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-black rounded-full" />
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import StatusBar from '../../imports/StatusBar/StatusBar';
 
 interface RequestTeam {
   id: number;
@@ -56,13 +55,8 @@ export default function ReceivedRequestsPage({ onBack, onViewTeam }: Props) {
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
 
-      {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center px-4">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center px-4">
         <button onClick={onBack} className="flex items-center gap-1 text-[13px] text-[#6a7282]">
           <ChevronLeft size={16} />
           뒤로
@@ -74,7 +68,7 @@ export default function ReceivedRequestsPage({ onBack, onViewTeam }: Props) {
       </div>
 
       {/* Content */}
-      <div className="absolute top-[100px] left-0 right-0 bottom-[34px] overflow-y-auto">
+      <div className="absolute top-[56px] left-0 right-0 bottom-[34px] overflow-y-auto">
 
         {/* 안내 배너 */}
         <div className="mx-4 mt-[16px] mb-[12px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[12px] px-[14px] py-[12px]">
@@ -115,11 +109,6 @@ export default function ReceivedRequestsPage({ onBack, onViewTeam }: Props) {
             </button>
           ))}
         </div>
-      </div>
-
-      {/* Home Indicator */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px] bg-white">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-black rounded-full" />
       </div>
     </div>
   );

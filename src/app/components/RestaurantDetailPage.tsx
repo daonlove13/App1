@@ -1,5 +1,4 @@
 import { ChevronLeft, MapPin, Users, Clock, Phone } from 'lucide-react';
-import StatusBar from '../../imports/StatusBar/StatusBar';
 
 export interface Restaurant {
   id: number;
@@ -21,19 +20,15 @@ export default function RestaurantDetailPage({
 }) {
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
-      {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
 
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center gap-2 border-b border-[#f3f4f6]">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center gap-2 border-b border-[#f3f4f6]">
         <button onClick={onBack} className="p-1"><ChevronLeft size={24} /></button>
         <span className="font-bold text-[16px]">식당 상세</span>
       </div>
 
       {/* Content */}
-      <div className="absolute top-[110px] left-0 right-0 bottom-0 overflow-y-auto">
+      <div className="absolute top-[66px] left-0 right-0 bottom-0 overflow-y-auto">
         <div className="h-[220px] bg-[#f3f4f6] flex items-center justify-center">
           <span className="text-[#d1d5dc] text-[12px]">사진 준비 중</span>
         </div>

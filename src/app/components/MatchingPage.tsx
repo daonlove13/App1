@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, ChevronRight, Users } from 'lucide-react';
-import StatusBar from '../../imports/StatusBar/StatusBar';
-import BottomNav from './BottomNav';
+import { Bell, ChevronRight, Users, UserPlus, X } from 'lucide-react';
 import type { Team, TeamMember } from '../services/api';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
@@ -69,13 +67,8 @@ export default function MatchingPage({ team, onTabChange, onOpenNotifications, o
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]" data-name="MatchingPage">
 
-      {/* ── Status bar ── */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-
       {/* ── Header ── */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center justify-between border-b border-[#f3f4f6] h-[73px]">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 px-4 py-4 flex items-center justify-between border-b border-[#f3f4f6] h-[73px]">
         <span className="font-['Protest_Riot'] text-[22px] leading-[28px]">indeed</span>
         <button className="p-2 relative" onClick={onOpenNotifications}>
           <Bell size={24} />
@@ -84,7 +77,7 @@ export default function MatchingPage({ team, onTabChange, onOpenNotifications, o
       </div>
 
       {/* ── Content ── */}
-      <div className="absolute top-[117px] left-0 right-0 bottom-[90px] overflow-y-auto">
+      <div className="absolute top-[73px] left-0 right-0 bottom-[0px] overflow-y-auto">
 
         {/* 서브 타이틀 */}
         <div className="px-4 pt-5 pb-4 border-b border-[#f3f4f6]">
@@ -212,8 +205,6 @@ export default function MatchingPage({ team, onTabChange, onOpenNotifications, o
 
         </div>
       </div>
-
-      <BottomNav active="matching" onTabChange={onTabChange} />
     </div>
   );
 }

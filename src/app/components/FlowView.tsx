@@ -1,3 +1,4 @@
+import { Component } from 'react';
 import Splash from '../../imports/Splash';
 import Login from '../../imports/Login';
 import OnboardingScreen from './OnboardingScreen';
@@ -6,7 +7,8 @@ import StudentIdUploadPage from './StudentIdUploadPage';
 import ApprovalCompletePage from './ApprovalCompletePage';
 import MainHome from './MainHome';
 import MatchingPage from './MatchingPage';
-import ChatPage, { type ChatItem } from './ChatPage';
+import ChatPage from './ChatPage';
+import type { ChatItem } from './ChatPage';
 import ChatRoomPage from './ChatRoomPage';
 import MyPage from './MyPage';
 import HistoryPage from './HistoryPage';
@@ -15,6 +17,10 @@ import InviteLinkPage from './InviteLinkPage';
 import MatchSuccessPage from './MatchSuccessPage';
 import RestaurantDetailPage from './RestaurantDetailPage';
 import NotificationPage from './NotificationPage';
+import BrowseTeamsPage from './BrowseTeamsPage';
+import ReceivedRequestsPage from './ReceivedRequestsPage';
+import TeamProfilePage from './TeamProfilePage';
+import type { RequestTeam } from './ReceivedRequestsPage';
 import type { Team } from '../services/api';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
@@ -35,6 +41,7 @@ const dummyChat: ChatItem = {
 };
 
 const dummyTeam: Team = {
+  id: 'dummy-team-1',
   teamName: '충북대 심리학과팀',
   gender: '남성',
   size: '3v3',
@@ -44,9 +51,21 @@ const dummyTeam: Team = {
   ],
   maxMembers: 3,
   applied: false,
+  createdAt: new Date().toISOString(),
 };
 
 const dummyTeamApplied: Team = { ...dummyTeam, applied: true };
+
+const dummyRequestTeam: RequestTeam = {
+  id: 1,
+  name: '연세대 경영학과팀',
+  university: '연세대',
+  department: '경영학과',
+  size: '2:2',
+  initial: '연',
+  receivedAt: '방금 전',
+  matchType: '신입생 전용',
+};
 
 /* ── 스케일 상수 ─────────────────────────────────────────────── */
 const SCALE = 0.295;
@@ -54,6 +73,26 @@ const PW = 390;
 const PH = 844;
 const CW = Math.round(PW * SCALE);
 const CH = Math.round(PH * SCALE);
+
+/* ── 에러 바운더리 ────────────────────────────────────────────── */
+interface EBState { hasError: boolean }
+class ScreenErrorBoundary extends Component<{ children: React.ReactNode }, EBState> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="size-full flex items-center justify-center bg-gray-50">
+          <p className="text-[11px] text-gray-400 text-center px-4">렌더 오류</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 /* ── 화면 카드 ───────────────────────────────────────────────── */
 interface ScreenCardProps {
@@ -86,7 +125,7 @@ function ScreenCard({ label, sublabel, tag, tagColor = 'bg-gray-400', children }
             userSelect: 'none',
           }}
         >
-          {children}
+          <ScreenErrorBoundary>{children}</ScreenErrorBoundary>
         </div>
       </div>
       <div className="text-center">
@@ -374,6 +413,31 @@ export default function FlowView() {
             <Arrow label="과팅 이력 →" />
             <ScreenCard label="과팅 이력 상세">
               <HistoryPage onBack={noop} onTabChange={noopTab} />
+            </ScreenCard>
+          </div>
+        </section>
+
+        <Divider />
+
+        {/* ── ⑦ 팀 탐색 플로우 ── */}
+        <section>
+          <SectionHeader num="7" title="팀 탐색 · 받은 신청 플로우" color="bg-gray-600" />
+          <div className="flex items-start gap-3 flex-wrap">
+            <ScreenCard label="과팅 신청 (탐색)" sublabel="필터 · 신청하기">
+              <BrowseTeamsPage onBack={noop} onApply={noop} />
+            </ScreenCard>
+            <Arrow label="받은 신청 →" />
+            <ScreenCard label="받은 신청 목록" sublabel="24시간 내 수락">
+              <ReceivedRequestsPage onBack={noop} onViewTeam={noop} />
+            </ScreenCard>
+            <Arrow label="팀 프로필 →" />
+            <ScreenCard label="팀 프로필" sublabel="수락 / 거절">
+              <TeamProfilePage
+                team={dummyRequestTeam}
+                onBack={noop}
+                onAccept={noop}
+                onReject={noop}
+              />
             </ScreenCard>
           </div>
         </section>

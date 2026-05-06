@@ -1,73 +1,6 @@
 import { useState, useRef } from 'react';
 import { Camera, CheckCircle, Upload, ChevronLeft, Loader2, AlertCircle } from 'lucide-react';
 import { uploadStudentCard } from '../services/api';
-import StatusBar from '../../imports/StatusBar/StatusBar';
-
-/* ── 제휴 가게 미리보기 데이터 ─────────────────────────────────── */
-const PREVIEW_RESTAURANTS = [
-  { id: 1, name: '치킨앤비어 중대점', category: '치킨 · 맥주' },
-  { id: 2, name: '혼마 파스타', category: '이탈리안' },
-  { id: 3, name: '더 플레이스', category: '카페 · 브런치' },
-  { id: 4, name: '소이연남', category: '한식 · 술집' },
-  { id: 5, name: '비스트로 34', category: '양식' },
-];
-
-/* ── 밸런스 게임 데이터 ──────────────────────────────────────────── */
-const BALANCE_QUESTIONS = [
-  { q: '첫 만남 장소는?', a: '카페에서', b: '맛집에서' },
-  { q: '과팅 인원 선택한다면?', a: '2:2 소규모', b: '3:3 왁자지껄' },
-  { q: '자기소개 방식은?', a: '재미있게 웃으며', b: '진지하게 깊이' },
-  { q: '첫인상에서 더 중요한 건?', a: '외모 (솔직하게)', b: '분위기 · 말투' },
-  { q: '과팅 시작할 때 먼저?', a: '내가 먼저 말 걸기', b: '상대방이 먼저' },
-];
-
-/* ── 밸런스 게임 컴포넌트 ─────────────────────────────────────────── */
-function BalanceGame() {
-  const [qIdx, setQIdx] = useState(0);
-  const [selected, setSelected] = useState<'a' | 'b' | null>(null);
-  const q = BALANCE_QUESTIONS[qIdx];
-
-  const nextQuestion = () => {
-    setSelected(null);
-    setQIdx(i => (i + 1) % BALANCE_QUESTIONS.length);
-  };
-
-  return (
-    <div className="mb-5">
-      <div className="flex items-center justify-between mb-2">
-        <p className="font-bold text-[16px] text-[#0a0a0a]">밸런스 게임 ⚡️</p>
-        <button onClick={nextQuestion} className="text-[12px] text-[#6a7282] font-medium">
-          다음 문제 →
-        </button>
-      </div>
-      <div className="border-2 border-[#e5e7eb] rounded-[20px] p-5">
-        <p className="text-[15px] font-bold text-center text-[#0a0a0a] mb-4 leading-[22px]">{q.q}</p>
-        <div className="grid grid-cols-2 gap-3">
-          {(['a', 'b'] as const).map(side => (
-            <button
-              key={side}
-              onClick={() => setSelected(side)}
-              className={`py-[14px] px-2 rounded-[14px] text-[14px] font-semibold border-2 transition-all ${
-                selected === side
-                  ? 'bg-black text-white border-black'
-                  : selected !== null
-                  ? 'bg-[#f9fafb] text-[#c4c9d4] border-[#f3f4f6]'
-                  : 'bg-white text-[#0a0a0a] border-[#e5e7eb] active:bg-[#f9fafb]'
-              }`}
-            >
-              {q[side]}
-            </button>
-          ))}
-        </div>
-        {selected && (
-          <p className="text-center text-[12px] text-[#6a7282] mt-3 leading-[18px]">
-            승인 후 팀원들이랑도 해보세요! 😄
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
 
 /* ── Props ───────────────────────────────────────────────────────── */
 interface Props {
@@ -134,13 +67,8 @@ export default function StudentIdUploadPage({ onDone, onBack, defaultState = 'id
         className="hidden"
       />
 
-      {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center px-4">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center px-4">
         {onBack && isUploadState && state !== 'uploading' && (
           <button onClick={onBack} className="flex items-center gap-1 text-[13px] text-[#6a7282]">
             <ChevronLeft size={18} />
@@ -153,7 +81,7 @@ export default function StudentIdUploadPage({ onDone, onBack, defaultState = 'id
       </div>
 
       {/* Content */}
-      <div className="absolute top-[100px] left-0 right-0 bottom-[34px] flex flex-col overflow-hidden">
+      <div className="absolute top-[56px] left-0 right-0 bottom-[34px] flex flex-col overflow-hidden">
         {state !== 'pending' ? (
           /* ── 업로드 UI ─────────────────────────────────────── */
           <div className="flex flex-col flex-1 px-5 pt-6">
@@ -302,37 +230,6 @@ export default function StudentIdUploadPage({ onDone, onBack, defaultState = 'id
               </div>
             </div>
 
-            {/* 밸런스 게임 */}
-            <div className="px-5">
-              <BalanceGame />
-            </div>
-
-            {/* 제휴 가게 미리보기 */}
-            <div className="mb-5">
-              <div className="px-5 mb-2">
-                <p className="font-bold text-[16px] text-[#0a0a0a] mb-0.5">제휴 가게 미리보기</p>
-                <p className="text-[12px] text-[#6a7282]">매칭되면 가기 좋은 학교 근처 가게들</p>
-              </div>
-              <div className="flex gap-3 px-5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-                {PREVIEW_RESTAURANTS.map(r => (
-                  <div
-                    key={r.id}
-                    className="shrink-0 w-[140px] bg-[#f9fafb] rounded-[16px] overflow-hidden border border-[#f3f4f6]"
-                  >
-                    <div className="h-[80px] bg-[#f3f4f6] flex items-center justify-center">
-                      <span className="text-[10px] text-[#d1d5dc]">사진 준비 중</span>
-                    </div>
-                    <div className="p-2.5">
-                      <p className="font-semibold text-[12px] text-[#0a0a0a] leading-tight mb-0.5">
-                        {r.name}
-                      </p>
-                      <p className="text-[10px] text-[#99a1af]">{r.category}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* CTA */}
             <div className="px-5 pb-6">
               <button
@@ -344,11 +241,6 @@ export default function StudentIdUploadPage({ onDone, onBack, defaultState = 'id
             </div>
           </div>
         )}
-      </div>
-
-      {/* Home Indicator */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px] bg-white">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-black rounded-full" />
       </div>
     </div>
   );

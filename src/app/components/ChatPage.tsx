@@ -1,6 +1,4 @@
 import { Bell } from 'lucide-react';
-import StatusBar from '../../imports/StatusBar/StatusBar';
-import BottomNav from './BottomNav';
 import { useChats } from '../hooks/useData';
 import type { ChatItem } from '../services/api';
 
@@ -44,13 +42,8 @@ export default function ChatPage({ onTabChange, onOpenRoom, onOpenNotifications,
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
 
-      {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 px-4 flex items-center justify-between border-b border-[#f3f4f6] h-[56px]">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 px-4 flex items-center justify-between border-b border-[#f3f4f6] h-[56px]">
         <h1 className="font-bold text-[20px] text-[#0a0a0a]">채팅</h1>
         <button className="p-2 relative" onClick={onOpenNotifications}>
           <Bell size={22} />
@@ -59,7 +52,7 @@ export default function ChatPage({ onTabChange, onOpenRoom, onOpenNotifications,
       </div>
 
       {/* Content */}
-      <div className="absolute top-[100px] left-0 right-0 bottom-[90px] overflow-y-auto">
+      <div className="absolute top-[56px] left-0 right-0 bottom-[0px] overflow-y-auto">
 
         {/* 진행 중인 과팅 */}
         <div className="px-4 pt-[14px] pb-[6px]">
@@ -146,8 +139,6 @@ export default function ChatPage({ onTabChange, onOpenRoom, onOpenNotifications,
           ))
         )}
       </div>
-
-      <BottomNav active="chat" onTabChange={onTabChange} />
     </div>
   );
 }

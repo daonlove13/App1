@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { ChevronLeft, Copy, Check, Link2 } from 'lucide-react';
 
-import StatusBar from '../../imports/StatusBar/StatusBar';
-
 interface Props {
   teamName?: string;
   size?: '2v2' | '3v3';
@@ -30,13 +28,8 @@ export default function InviteLinkPage({
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
 
-      {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center px-4">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center px-4">
         <button onClick={onBack} className="flex items-center gap-1 text-[13px] text-[#6a7282]">
           <ChevronLeft size={16} />
           이전
@@ -45,7 +38,7 @@ export default function InviteLinkPage({
       </div>
 
       {/* Content */}
-      <div className="absolute top-[100px] left-0 right-0 bottom-[34px] px-5 pt-7">
+      <div className="absolute top-[56px] left-0 right-0 bottom-[34px] px-5 pt-7">
 
         {/* Title */}
         <div className="mb-7">
@@ -131,11 +124,6 @@ export default function InviteLinkPage({
         >
           나중에 초대할게요
         </button>
-      </div>
-
-      {/* Home Indicator */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px] bg-white">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-black rounded-full" />
       </div>
     </div>
   );

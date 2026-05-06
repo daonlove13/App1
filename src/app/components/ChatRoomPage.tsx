@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, X, MapPin, Clock, Check, Users, CalendarCheck, Trash2, Plus, BookOpen, HelpCircle, Store, ChevronDown, ChevronUp } from 'lucide-react';
 import type { ChatItem } from './ChatPage';
 import { useMessages } from '../hooks/useData';
-import StatusBar from '../../imports/StatusBar/StatusBar';
+
+type QuickKey = keyof typeof QUICK_CONTENT;
 
 interface Props {
   chat: ChatItem;
@@ -58,8 +59,6 @@ const QUICK_CONTENT = {
     '🍖 고기한판 — 삼겹살·목살 무한리필, 단체 예약 시 음료 서비스',
   ],
 } as const;
-
-type QuickKey = keyof typeof QUICK_CONTENT;
 
 const DEMO_MESSAGES = [
   {
@@ -143,19 +142,14 @@ export default function ChatRoomPage({ chat, onBack, onComplete }: Props) {
     const dt = new Date(d); return `${dt.getMonth() + 1}월 ${dt.getDate()}일`;
   };
 
-  const msgTop    = 104 + noticeBarH;
-  const msgBottom = 100; // bottom bar (~66px) + home indicator (34px)
+  const msgTop    = 60 + noticeBarH;
+  const msgBottom = 66;
 
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
 
-      {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 border-b border-[#f0f0f0] h-[60px] flex items-center px-4 justify-between">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 border-b border-[#f0f0f0] h-[60px] flex items-center px-4 justify-between">
         <button onClick={onBack} className="flex items-center gap-[4px] text-[13px] text-[#9ca3af]">
           <ChevronLeft size={16} /> 뒤로
         </button>
@@ -172,7 +166,7 @@ export default function ChatRoomPage({ chat, onBack, onComplete }: Props) {
           <button
             onClick={() => setMeetingExpanded(v => !v)}
             className="absolute left-0 right-0 z-[9] bg-[#f9f9f9] border-b border-[#efefef] flex items-center px-4 gap-[10px]"
-            style={{ top: '104px', height: '44px' }}
+            style={{ top: '60px', height: '44px' }}
           >
             {/* 아이콘 */}
             <div className="w-[24px] h-[24px] bg-black rounded-full flex items-center justify-center shrink-0">
@@ -213,7 +207,7 @@ export default function ChatRoomPage({ chat, onBack, onComplete }: Props) {
               />
               <div
                 className="absolute left-0 right-0 z-[10] bg-white shadow-[0_6px_24px_rgba(0,0,0,0.10)]"
-                style={{ top: '148px' }}
+                style={{ top: '104px' }}
               >
                 {/* 장소·시간 */}
                 <div className="px-5 pt-4 pb-3 flex flex-col gap-[10px]">
@@ -334,7 +328,7 @@ export default function ChatRoomPage({ chat, onBack, onComplete }: Props) {
       {/* Bottom bar */}
       <div
         className="absolute left-0 right-0 bg-white border-t border-[#f0f0f0] px-4 flex items-center gap-2"
-        style={{ bottom: '34px', paddingTop: '10px', paddingBottom: '10px' }}
+        style={{ bottom: '0px', paddingTop: '10px', paddingBottom: '10px' }}
       >
         <button
           onClick={() => setShowPlusMenu(v => !v)}
@@ -361,18 +355,13 @@ export default function ChatRoomPage({ chat, onBack, onComplete }: Props) {
         </button>
       </div>
 
-      {/* Home Indicator */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px] bg-white">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-black rounded-full" />
-      </div>
-
       {/* + 메뉴 팝업 */}
       {showPlusMenu && (
         <>
           <div className="absolute inset-0 z-30" onClick={() => setShowPlusMenu(false)} />
           <div
             className="absolute left-4 right-4 z-40 bg-white rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.10)] overflow-hidden"
-            style={{ bottom: '106px' }}
+            style={{ bottom: '72px' }}
           >
             {PLUS_MENU.map((item, idx) => {
               const Icon = item.icon;

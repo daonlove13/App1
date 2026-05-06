@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 
-import StatusBar from '../../imports/StatusBar/StatusBar';
-
 interface Props {
   onBack: () => void;
   onDone: (teamName: string, gender: '남성' | '여성', size: '2v2' | '3v3') => void;
@@ -24,13 +22,8 @@ export default function CreateTeamPage({ onBack, onDone }: Props) {
   return (
     <div className="bg-white overflow-clip relative rounded-[40px] w-[390px] h-[844px]">
 
-      {/* Status bar */}
-      <div className="absolute h-[44px] left-0 top-0 w-[390px] overflow-clip">
-        <StatusBar />
-      </div>
-
       {/* Header */}
-      <div className="absolute top-[44px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center px-4">
+      <div className="absolute top-[0px] left-0 right-0 bg-white z-10 border-b border-[#f3f4f6] h-[56px] flex items-center px-4">
         <button
           onClick={step === 1 ? onBack : () => setStep(s => (s - 1) as Step)}
           className="flex items-center gap-1 text-[13px] text-[#6a7282]"
@@ -42,7 +35,7 @@ export default function CreateTeamPage({ onBack, onDone }: Props) {
       </div>
 
       {/* 스텝 인디케이터 */}
-      <div className="absolute top-[100px] left-0 right-0 px-4 pt-[20px]">
+      <div className="absolute top-[56px] left-0 right-0 px-4 pt-[20px]">
         <div className="flex items-center gap-[6px] mb-[28px]">
           {[1, 2, 3].map(s => (
             <div
@@ -177,7 +170,7 @@ export default function CreateTeamPage({ onBack, onDone }: Props) {
       </div>
 
       {/* CTA 버튼 */}
-      <div className="absolute bottom-[58px] left-0 right-0 px-4">
+      <div className="absolute bottom-[24px] left-0 right-0 px-4">
         <button
           onClick={() => {
             if (step < 3) setStep(s => (s + 1) as Step);
@@ -190,11 +183,6 @@ export default function CreateTeamPage({ onBack, onDone }: Props) {
         >
           {step === 3 ? '팀 만들기 완료' : '다음'}
         </button>
-      </div>
-
-      {/* Home Indicator */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px] bg-white">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-black rounded-full" />
       </div>
     </div>
   );

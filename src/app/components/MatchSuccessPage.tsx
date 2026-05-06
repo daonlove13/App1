@@ -10,13 +10,8 @@ export default function MatchSuccessPage({ department = '경영학과', onGoToCh
   return (
     <div className="bg-black overflow-clip relative rounded-[40px] w-[390px] h-[844px] flex flex-col">
 
-      {/* Status bar */}
-      <div className="h-[44px] flex items-center px-5 shrink-0">
-        <p className="font-['SF_Compact_Display:Semibold',sans-serif] text-[16px] text-white tracking-[0.5px]">3:14</p>
-      </div>
-
       {/* Close button */}
-      <div className="absolute top-[52px] right-4 z-10">
+      <div className="absolute top-[16px] right-4 z-10">
         <button onClick={onLater} className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center">
           <X size={18} className="text-white" />
         </button>
@@ -73,7 +68,7 @@ export default function MatchSuccessPage({ department = '경영학과', onGoToCh
       </div>
 
       {/* CTA Buttons */}
-      <div className="px-5 pb-[58px] flex flex-col gap-3 shrink-0">
+      <div className="px-5 pb-[24px] flex flex-col gap-3 shrink-0">
         <button
           onClick={onGoToChat}
           className="w-full bg-white text-black rounded-[14px] py-[15px] text-[15px] font-semibold flex items-center justify-center gap-2"
@@ -87,11 +82,6 @@ export default function MatchSuccessPage({ department = '경영학과', onGoToCh
         >
           나중에 할게요
         </button>
-      </div>
-
-      {/* Home Indicator */}
-      <div className="absolute bottom-0 h-[34px] left-0 w-[390px]">
-        <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[139px] h-[4px] bg-white/30 rounded-full" />
       </div>
     </div>
   );

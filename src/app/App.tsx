@@ -24,6 +24,7 @@ import type { Restaurant } from './components/RestaurantDetailPage';
 import NotificationPage from './components/NotificationPage';
 import FlowView from './components/FlowView';
 import DevBar from './_dev/DevBar';
+import InstallGuide from './components/InstallGuide';
 
 // ── 데이터 훅 ────────────────────────────────────────────────────
 import { useTeam, useNotifications } from './hooks/useData';
@@ -60,6 +61,14 @@ export default function App() {
   const [subPage, setSubPage] = useState<SubPage>('none');
   const [openChat, setOpenChat] = useState<ChatItem | null>(null);
   const [openRestaurant, setOpenRestaurant] = useState<Restaurant | null>(null);
+
+  // PWA 설치 가이드 — 최초 1회만 보여주기
+  const [showInstallGuide, setShowInstallGuide] = useState(() => {
+    // standalone(앱처럼 실행 중)이면 가이드 스킵
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    const alreadySeen = localStorage.getItem('pwa-guide-seen') === 'true';
+    return !isStandalone && !alreadySeen;
+  });
 
   // ── 실제 팀 데이터 (Supabase) ──────────────────────────────────
   const { team, loading: teamLoading, create: createTeamApi, update: updateTeamApi, toggleApply } = useTeam();
@@ -195,6 +204,20 @@ export default function App() {
           ✕ 플로우 뷰 닫기
         </button>
         <FlowView />
+      </div>
+    );
+  }
+
+  /* ── PWA 설치 가이드 (최초 1회) ────────────────── */
+  if (showInstallGuide) {
+    return (
+      <div className="size-full">
+        <InstallGuide
+          onSkip={() => {
+            localStorage.setItem('pwa-guide-seen', 'true');
+            setShowInstallGuide(false);
+          }}
+        />
       </div>
     );
   }

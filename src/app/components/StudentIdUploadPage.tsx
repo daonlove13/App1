@@ -232,12 +232,10 @@ export default function StudentIdUploadPage({ onDone, onBack, defaultState = 'id
 
             {/* CTA */}
             <div className="px-5 pb-6">
-              <button
-                onClick={onDone}
-                className="w-full bg-black text-white rounded-[14px] py-[15px] text-[15px] font-semibold"
-              >
-                홈에서 기다릴게요
-              </button>
+              <p className="text-center text-[13px] text-[#99a1af] leading-[20px]">
+                승인 완료 시 알림으로 알려드려요.<br />
+                앱을 닫고 기다려도 괜찮아요 😊
+              </p>
             </div>
           </div>
         )}

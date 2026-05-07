@@ -307,13 +307,10 @@ export default function App() {
   // 학생증 제출 완료 → 심사 대기 화면 (홈 접근 불가)
   if (appScreen === 'studentIdPending') {
     return (
-      <div className="size-full flex items-center justify-center bg-gray-100">
-        {devBar}
-        <StudentIdUploadPage
-          defaultState="pending"
-          onDone={() => setAppScreen('app')}
-        />
-      </div>
+      <PendingScreen
+        devBar={devBar}
+        onApproved={() => setAppScreen('app')}
+      />
     );
   }
 
@@ -460,6 +457,43 @@ export default function App() {
     <div className="size-full flex items-center justify-center bg-gray-100">
       {devBar}
       {renderScreen()}
+    </div>
+  );
+}
+// ── 승인 대기 화면 (Realtime 감지) ────────────────────────────────
+function PendingScreen({ devBar, onApproved }: { devBar: React.ReactNode; onApproved: () => void }) {
+  useEffect(() => {
+    let mounted = true;
+
+    // 30초마다 폴링으로 verified 상태 확인
+    const interval = setInterval(async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from('users')
+        .select('verified')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (data?.verified && mounted) {
+        onApproved();
+      }
+    }, 30000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, [onApproved]);
+
+  return (
+    <div className="size-full flex items-center justify-center bg-gray-100">
+      {devBar}
+      <StudentIdUploadPage
+        defaultState="pending"
+        onDone={onApproved}
+      />
     </div>
   );
 }

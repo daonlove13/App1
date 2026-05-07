@@ -4,10 +4,12 @@ type Platform = 'ios' | 'android' | 'desktop' | 'unknown';
 
 function detectPlatform(): Platform {
   const ua = navigator.userAgent;
+  // 모바일 먼저 체크
   if (/iPhone|iPad|iPod/.test(ua)) return 'ios';
   if (/Android/.test(ua)) return 'android';
-  if (/Windows|Macintosh|Linux/.test(ua)) return 'desktop';
-  return 'unknown';
+  // 터치 디바이스면 모바일로 처리
+  if (navigator.maxTouchPoints > 1) return 'ios';
+  return 'desktop';
 }
 
 function isInStandaloneMode(): boolean {

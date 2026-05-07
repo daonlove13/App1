@@ -25,6 +25,7 @@ import NotificationPage from './components/NotificationPage';
 import FlowView from './components/FlowView';
 import DevBar from './_dev/DevBar';
 import InstallGuide from './components/InstallGuide';
+import RejectionPage from './components/RejectionPage';
 
 // ── 데이터 훅 ────────────────────────────────────────────────────
 import { useTeam, useNotifications } from './hooks/useData';
@@ -39,6 +40,7 @@ type AppScreen =
   | 'profileSetup'
   | 'studentIdUpload'
   | 'studentIdPending'
+  | 'rejected'
   | 'approvalComplete'
   | 'app';
 
@@ -74,6 +76,7 @@ export default function App() {
   const { unreadCount } = useNotifications();
 
   const [pendingTeamName, setPendingTeamName] = useState('');
+  const [rejectionReason, setRejectionReason] = useState<string | undefined>();
   const [pendingGender, setPendingGender] = useState<'남성' | '여성'>('남성');
   const [pendingSize, setPendingSize] = useState<'2v2' | '3v3'>('3v3');
 
@@ -314,6 +317,18 @@ export default function App() {
     );
   }
 
+  if (appScreen === 'rejected') {
+    return (
+      <div className="size-full flex items-center justify-center bg-gray-100">
+        {devBar}
+        <RejectionPage
+          reason={rejectionReason}
+          onRetry={() => setAppScreen('studentIdUpload')}
+        />
+      </div>
+    );
+  }
+
   if (appScreen === 'approvalComplete') {
     return (
       <div className="size-full flex items-center justify-center bg-gray-100">
@@ -461,31 +476,37 @@ export default function App() {
   );
 }
 // ── 승인 대기 화면 (Realtime 감지) ────────────────────────────────
-function PendingScreen({ devBar, onApproved }: { devBar: React.ReactNode; onApproved: () => void }) {
+function PendingScreen({ devBar, onApproved, onRejected }: { devBar: React.ReactNode; onApproved: () => void; onRejected: (reason?: string) => void }) {
   useEffect(() => {
     let mounted = true;
 
-    // 30초마다 폴링으로 verified 상태 확인
-    const interval = setInterval(async () => {
+    const check = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const { data } = await supabase
         .from('users')
-        .select('verified')
+        .select('verified, verified_status, rejection_reason')
         .eq('id', user.id)
         .maybeSingle();
 
-      if (data?.verified && mounted) {
+      if (!mounted) return;
+
+      if (data?.verified_status === 'approved' || data?.verified === true) {
         onApproved();
+      } else if (data?.verified_status === 'rejected') {
+        onRejected(data?.rejection_reason ?? undefined);
       }
-    }, 30000);
+    };
+
+    // 30초마다 폴링
+    const interval = setInterval(check, 30000);
 
     return () => {
       mounted = false;
       clearInterval(interval);
     };
-  }, [onApproved]);
+  }, [onApproved, onRejected]);
 
   return (
     <div className="size-full flex items-center justify-center bg-gray-100">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';
 
@@ -38,6 +38,13 @@ function GoogleIcon() {
 
 export default function LoginScreen({ onSignup, onLogin }: Props) {
   const [loading, setLoading] = useState<'google' | 'kakao' | null>(null);
+
+  // 페이지 포커스 시 로딩 상태 초기화 (뒤로가기 대응)
+  useEffect(() => {
+    const handleFocus = () => setLoading(null);
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleGoogle = async () => {
@@ -48,6 +55,9 @@ export default function LoginScreen({ onSignup, onLogin }: Props) {
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/`,
+          queryParams: {
+            prompt: 'select_account',
+          },
         },
       });
       if (error) throw error;

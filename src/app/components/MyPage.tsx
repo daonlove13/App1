@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { useProfile, useHistory } from '../hooks/useData';
+import { authSignOut } from '../services/api';
 
 type Tab = 'home' | 'matching' | 'chat' | 'my';
 
@@ -12,19 +13,26 @@ function Skeleton({ className }: { className?: string }) {
   return <div className={`animate-pulse bg-[#f3f4f6] rounded-[12px] ${className}`} />;
 }
 
-const menuItems = [
-  { label: '알림 설정', danger: false },
-  { label: '이용약관', danger: false },
-  { label: '개인정보처리방침', danger: false },
-  { label: '로그아웃', danger: true },
-  { label: '회원 탈퇴', danger: true },
-];
+
 
 export default function MyPage({ onTabChange, onOpenHistory }: Props) {
   const { profile, loading: profileLoading } = useProfile();
   const { history, loading: histLoading } = useHistory();
 
   const initial = profile?.name?.[0] ?? '?';
+
+  const handleLogout = async () => {
+    if (!confirm('로그아웃 하시겠어요?')) return;
+    await authSignOut();
+  };
+
+  const menuItems = [
+    { label: '알림 설정', danger: false, onClick: () => {} },
+    { label: '이용약관', danger: false, onClick: () => {} },
+    { label: '개인정보처리방침', danger: false, onClick: () => {} },
+    { label: '로그아웃', danger: true, onClick: handleLogout },
+    { label: '회원 탈퇴', danger: true, onClick: () => {} },
+  ];
   const recentHistory = history.slice(0, 2);
 
   return (
@@ -123,6 +131,7 @@ export default function MyPage({ onTabChange, onOpenHistory }: Props) {
           {menuItems.map((item, idx) => (
             <button
               key={idx}
+              onClick={item.onClick}
               className="w-full flex items-center justify-between py-[14px] border-b border-[#f9fafb]"
             >
               <span className={`text-[14px] ${item.danger ? 'text-[#e24b4a]' : 'text-[#1e2939]'}`}>

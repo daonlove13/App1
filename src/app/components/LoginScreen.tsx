@@ -65,6 +65,7 @@ export default function LoginScreen({ onSignup, onLogin }: Props) {
         provider: 'kakao',
         options: {
           redirectTo: `${window.location.origin}/`,
+          scopes: 'profile_nickname profile_image',
         },
       });
       if (error) throw error;

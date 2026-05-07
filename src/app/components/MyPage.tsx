@@ -55,7 +55,7 @@ export default function MyPage({ onTabChange, onOpenHistory }: Props) {
             <div className="flex flex-col gap-[4px]">
               <p className="font-bold text-[17px] text-[#0a0a0a] leading-[25px]">{profile?.name}</p>
               <p className="text-[12px] text-[#6a7282]">
-                {profile?.university} · {profile?.department} · {profile?.grade}
+                {profile?.university} · {profile?.department}
               </p>
               {profile?.verified && (
                 <div className="mt-[2px] bg-[#f3f4f6] border border-[#d1d5dc] rounded-full px-[8px] py-[2px] inline-flex w-fit">

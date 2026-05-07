@@ -73,7 +73,7 @@ export default function App() {
   });
 
   // ── 실제 팀 데이터 (Supabase) ──────────────────────────────────
-  const { team, loading: teamLoading, create: createTeamApi, update: updateTeamApi, toggleApply } = useTeam();
+  const { team, loading: teamLoading, create: createTeamApi, update: updateTeamApi, remove: removeTeamApi, toggleApply } = useTeam();
   const { unreadCount } = useNotifications();
 
   const [pendingTeamName, setPendingTeamName] = useState('');
@@ -432,6 +432,11 @@ export default function App() {
             onToggleApply={async () => {
               try { await toggleApply(); }
               catch (e) { console.error('과팅 신청 오류:', e); }
+            }}
+            onDeleteTeam={async () => {
+              if (!confirm('팀을 해체하시겠어요?')) return;
+              try { await removeTeamApi(); }
+              catch (e) { console.error('팀 해체 오류:', e); }
             }}
             unreadCount={unreadCount}
           />

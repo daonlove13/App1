@@ -81,10 +81,12 @@ function HasTeamStatusCard({
   team,
   onInviteTeam,
   onToggleApply,
+  onDeleteTeam,
 }: {
   team: Team;
   onInviteTeam: () => void;
   onToggleApply: () => void;
+  onDeleteTeam: () => void;
 }) {
   const applied = team.applied;
 
@@ -144,12 +146,20 @@ function HasTeamStatusCard({
           <span className="text-white/70 text-[14px] font-medium">대기 중 · 탭하면 취소</span>
         </button>
       ) : (
-        <button
-          onClick={onToggleApply}
-          className="w-full bg-white text-black py-[10px] rounded-full text-[14px] font-semibold inline-flex items-center justify-center gap-1"
-        >
-          과팅 신청하기 <ChevronRight size={14} strokeWidth={2.5} />
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={onToggleApply}
+            className="flex-1 bg-white text-black py-[10px] rounded-full text-[14px] font-semibold inline-flex items-center justify-center gap-1"
+          >
+            과팅 신청하기 <ChevronRight size={14} strokeWidth={2.5} />
+          </button>
+          <button
+            onClick={onDeleteTeam}
+            className="bg-white/10 text-white/60 px-4 py-[10px] rounded-full text-[13px] font-medium active:bg-white/20"
+          >
+            팀 해체
+          </button>
+        </div>
       )}
     </div>
   );
@@ -233,6 +243,7 @@ export default function MainHome({
   onOpenRestaurant?: (item: Restaurant) => void;
   onOpenNotifications?: () => void;
   onToggleApply?: () => void;
+  onDeleteTeam?: () => void;
   unreadCount?: number;
 }) {
   const { profile, loading: profileLoading } = useProfile();
@@ -276,6 +287,7 @@ export default function MainHome({
             team={team}
             onInviteTeam={onInviteTeam}
             onToggleApply={onToggleApply ?? (() => {})}
+            onDeleteTeam={onDeleteTeam ?? (() => {})}
           />
         ) : (
           <NoTeamStatusCard info={profileInfo} onCreateTeam={onCreateTeam} />

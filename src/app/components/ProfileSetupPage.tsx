@@ -81,15 +81,7 @@ export default function ProfileSetupPage({ onBack, onDone }: Props) {
 
       {/* Scrollable content */}
       <div className="absolute top-[56px] left-0 right-0 bottom-[100px] overflow-y-auto px-[30px] pt-2">
-        {/* Step indicator */}
-        <div className="flex gap-[6px] mb-[24px]">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-[4px] flex-1 rounded-full bg-black" />
-          ))}
-        </div>
-
-        <p className="text-[12px] text-[#6a7282] mb-[4px]">STEP 3 · 개인정보</p>
-        <h2 className="font-bold text-[22px] text-[#0a0a0a] mb-[6px] leading-[30px]">
+        <h2 className="font-bold text-[22px] text-[#0a0a0a] mb-[6px] leading-[30px] mt-[8px]">
           기본 정보를<br />입력해주세요
         </h2>
         <p className="text-[13px] text-[#6a7282] mb-[24px] leading-[20px]">

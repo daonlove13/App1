@@ -123,12 +123,16 @@ export default function App() {
 
     checkSession();
 
-    // Auth 상태 변경 리스너 (로그아웃 시 자동으로 처리)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    // Auth 상태 변경 리스너
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT' && mounted) {
         setAppScreen('splash');
         setSubPage('none');
         setActiveTab('home');
+      }
+      // OAuth 로그인 후 콜백 처리
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && mounted) {
+        checkSession();
       }
     });
 

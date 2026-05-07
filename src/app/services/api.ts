@@ -185,9 +185,13 @@ export async function createUserProfile(profile: {
     .upsert({
       id: userId,
       name: profile.name,
+      university: '충북대학교',
       department: profile.department,
       gender: profile.gender,
+      student_id: profile.studentId ?? null,
+      phone: profile.phone ?? null,
       verified: false,
+      verified_status: 'pending',
     }, { onConflict: 'id' });
 
   if (error) {

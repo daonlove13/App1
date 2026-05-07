@@ -24,6 +24,7 @@ import type { Restaurant } from './components/RestaurantDetailPage';
 import NotificationPage from './components/NotificationPage';
 import FlowView from './components/FlowView';
 import DevBar from './_dev/DevBar';
+import BottomNav from './components/BottomNav';
 import InstallGuide from './components/InstallGuide';
 import RejectionPage from './components/RejectionPage';
 
@@ -471,7 +472,12 @@ export default function App() {
   return (
     <div className="size-full flex items-center justify-center bg-gray-100">
       {devBar}
-      {renderScreen()}
+      <div className="relative w-[390px] h-[844px] overflow-hidden">
+        {renderScreen()}
+        {subPage === 'none' && (
+          <BottomNav active={activeTab} onTabChange={handleTabChange} />
+        )}
+      </div>
     </div>
   );
 }

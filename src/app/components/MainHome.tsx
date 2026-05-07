@@ -233,6 +233,7 @@ export default function MainHome({
   onOpenRestaurant,
   onOpenNotifications,
   onToggleApply,
+  onDeleteTeam,
   unreadCount = 0,
 }: {
   team: Team | null;

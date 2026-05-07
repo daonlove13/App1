@@ -35,9 +35,9 @@ export default function InstallGuide({ onSkip }: Props) {
   }, [onSkip]);
 
   const iosSteps = [
-    { icon: '⋯', title: '하단 오른쪽 버튼 탭', desc: 'Safari 하단 오른쪽 □↑ 버튼 또는 ···  버튼을 누르세요' },
-    { icon: '+', title: '"홈 화면에 추가" 선택', desc: '스크롤을 내려 "Add to Home Screen"을 탭하세요' },
-    { icon: '✓', title: '"추가" 탭', desc: '"추가" 또는 "Add"를 탭하면 홈 화면에 아이콘이 생겨요' },
+    { icon: '···', title: '하단 점 세 개 버튼 탭', desc: 'Safari 하단 오른쪽 ··· 버튼을 누르세요' },
+    { icon: '↑', title: '"공유" 선택', desc: '메뉴에서 "공유(Share)"를 탭하세요' },
+    { icon: '+', title: '"홈 화면에 추가" 선택', desc: '"홈 화면에 추가"를 탭하면 아이콘이 생겨요' },
   ];
 
   const androidSteps = [

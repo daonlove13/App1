@@ -62,12 +62,10 @@ export default function App() {
   const [openChat, setOpenChat] = useState<ChatItem | null>(null);
   const [openRestaurant, setOpenRestaurant] = useState<Restaurant | null>(null);
 
-  // PWA 설치 가이드 — 브라우저 접속 시 표시, 앱(standalone) 또는 OAuth 콜백 시 스킵
+  // PWA 설치 가이드 — standalone 아닐 때만 표시, OAuth 콜백이면 스킵
   const [showInstallGuide, setShowInstallGuide] = useState(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    // OAuth 콜백 시 URL에 code 또는 access_token 파라미터 있으면 스킵
-    const url = window.location.href;
-    const isOAuthCallback = url.includes('code=') || url.includes('access_token=') || url.includes('#');
+    const isOAuthCallback = window.location.hash.includes('access_token');
     return !isStandalone && !isOAuthCallback;
   });
 

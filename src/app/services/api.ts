@@ -299,11 +299,20 @@ export async function createTeam(payload: Omit<Team, 'id' | 'createdAt'>): Promi
   // 기존 팀 삭제 후 재생성
   await supabase.from('teams').delete().eq('leader_id', userId);
 
+  // 유저 학과 가져오기
+  const { data: userData } = await supabase
+    .from('users')
+    .select('department')
+    .eq('id', userId)
+    .maybeSingle();
+
   const insertData: Record<string, unknown> = {
     leader_id: userId,
+    department: userData?.department ?? payload.teamName,
     gender: payload.gender,
-    size: payload.size,
+    size: typeof payload.size === 'string' ? (payload.size === '2v2' ? 2 : 3) : payload.size,
     status: 'waiting',
+    created_at: new Date().toISOString(),
   };
 
   const { data, error } = await supabase

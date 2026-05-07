@@ -85,6 +85,10 @@ export default function App() {
 
     async function checkSession() {
       try {
+        // OAuth 콜백 URL의 hash fragment 처리 (Supabase가 #access_token=... 형태로 전달)
+        if (window.location.hash && window.location.hash.includes('access_token')) {
+          await supabase.auth.getSession();
+        }
         const { data: { session } } = await supabase.auth.getSession();
 
         if (!session) {

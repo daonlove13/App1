@@ -3,5 +3,12 @@ import { projectId, publicAnonKey } from '/utils/supabase/info';
 
 export const supabase = createClient(
   `https://${projectId}.supabase.co`,
-  publicAnonKey
+  publicAnonKey,
+  {
+    auth: {
+      detectSessionInUrl: true,
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  }
 );

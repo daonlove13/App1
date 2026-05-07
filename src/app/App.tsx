@@ -311,11 +311,7 @@ export default function App() {
         {devBar}
         <StudentIdUploadPage
           defaultState="pending"
-          onDone={() => {
-            // 대기 화면에서 "홈에서 기다릴게요" → 아직 미승인이므로 계속 대기
-            // (실제 서비스에서는 verified=true가 되면 앱으로 이동)
-            // 여기서는 UX를 위해 현 상태 유지 or 재확인
-          }}
+          onDone={() => setAppScreen('app')}
         />
       </div>
     );

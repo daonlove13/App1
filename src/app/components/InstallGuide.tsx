@@ -35,9 +35,9 @@ export default function InstallGuide({ onSkip }: Props) {
   }, [onSkip]);
 
   const iosSteps = [
-    { icon: '↑', title: '하단 공유 버튼 탭', desc: 'Safari 하단 가운데 □↑ 버튼을 누르세요' },
-    { icon: '+', title: '"홈 화면에 추가" 선택', desc: '스크롤을 내려 "홈 화면에 추가"를 탭하세요' },
-    { icon: '✓', title: '"추가" 탭', desc: '오른쪽 상단 "추가"를 탭하면 아이콘이 생겨요' },
+    { icon: '⋯', title: '하단 오른쪽 버튼 탭', desc: 'Safari 하단 오른쪽 □↑ 버튼 또는 ···  버튼을 누르세요' },
+    { icon: '+', title: '"홈 화면에 추가" 선택', desc: '스크롤을 내려 "Add to Home Screen"을 탭하세요' },
+    { icon: '✓', title: '"추가" 탭', desc: '"추가" 또는 "Add"를 탭하면 홈 화면에 아이콘이 생겨요' },
   ];
 
   const androidSteps = [
@@ -67,7 +67,10 @@ export default function InstallGuide({ onSkip }: Props) {
     <div className="size-full flex flex-col bg-black text-white">
       {/* 헤더 */}
       <div className="flex flex-col items-center pt-16 pb-8 px-6">
-        <p className="font-['Protest_Riot'] text-white text-[64px] leading-none">indeed</p>
+        <div className="w-20 h-20 rounded-2xl bg-black border border-white/20 flex items-center justify-center mb-4">
+          <span className="text-white font-bold text-sm tracking-widest">INDEED</span>
+        </div>
+        <p className="font-['Protest_Riot'] text-[36px]">INDEED</p>
         <p className="text-gray-400 text-sm mt-1">충북대 학과별 과팅 매칭</p>
       </div>
 
